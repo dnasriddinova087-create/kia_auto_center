@@ -2,6 +2,7 @@
 // Owner: Nasriddinova Dilfuza
 
 import React from 'react';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -19,6 +20,114 @@ const queryClient = new QueryClient({
     },
   },
 });
+
+class GlobalErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean; error: Error | null }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('Global Error Boundary caught:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: '#111111',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 24,
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: '#C8102E',
+              paddingHorizontal: 12,
+              paddingVertical: 4,
+              borderRadius: 6,
+              marginBottom: 16,
+            }}
+          >
+            <Text style={{ color: '#FFF', fontWeight: '900', letterSpacing: 2 }}>
+              KIA AUTO CENTER
+            </Text>
+          </View>
+          <Text
+            style={{
+              color: '#FFFFFF',
+              fontSize: 20,
+              fontWeight: '800',
+              textAlign: 'center',
+              marginBottom: 10,
+            }}
+          >
+            Kutilmagan holat yuz berdi
+          </Text>
+          <Text
+            style={{
+              color: '#9CA3AF',
+              fontSize: 13,
+              textAlign: 'center',
+              maxWidth: 480,
+              marginBottom: 24,
+              lineHeight: 20,
+            }}
+          >
+            Tizim barqaror ishlashi ta'minlanmoqda. Bosh sahifaga qaytish yoki sahifani yangilash
+            orqali davom etishingiz mumkin.
+          </Text>
+          <View style={{ flexDirection: 'row', gap: 12 }}>
+            <TouchableOpacity
+              onPress={() => {
+                this.setState({ hasError: false, error: null });
+                if (typeof window !== 'undefined') window.location.href = '/';
+              }}
+              style={{
+                backgroundColor: '#C8102E',
+                paddingHorizontal: 20,
+                paddingVertical: 12,
+                borderRadius: 8,
+              }}
+            >
+              <Text style={{ color: '#FFF', fontWeight: '700', fontSize: 14 }}>
+                Bosh sahifaga qaytish
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                if (typeof window !== 'undefined') window.location.reload();
+              }}
+              style={{
+                backgroundColor: '#222222',
+                borderWidth: 1,
+                borderColor: '#444444',
+                paddingHorizontal: 20,
+                paddingVertical: 12,
+                borderRadius: 8,
+              }}
+            >
+              <Text style={{ color: '#FFF', fontWeight: '700', fontSize: 14 }}>
+                Qayta yuklash
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 function AppNavigation() {
   const { isDark, colors } = useTheme();
@@ -58,17 +167,19 @@ function AppNavigation() {
 export default function RootLayout() {
   return (
     <SafeAreaProvider>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider>
-          <LanguageProvider>
-            <AuthProvider>
-              <FavoritesProvider>
-                <AppNavigation />
-              </FavoritesProvider>
-            </AuthProvider>
-          </LanguageProvider>
-        </ThemeProvider>
-      </QueryClientProvider>
+      <GlobalErrorBoundary>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider>
+            <LanguageProvider>
+              <AuthProvider>
+                <FavoritesProvider>
+                  <AppNavigation />
+                </FavoritesProvider>
+              </AuthProvider>
+            </LanguageProvider>
+          </ThemeProvider>
+        </QueryClientProvider>
+      </GlobalErrorBoundary>
     </SafeAreaProvider>
   );
 }

@@ -33,7 +33,13 @@ function AppNavigation() {
           animation: 'fade',
         }}
       >
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="catalog" options={{ headerShown: false }} />
+        <Stack.Screen name="calculator" options={{ headerShown: false }} />
+        <Stack.Screen name="favorites" options={{ headerShown: false }} />
+        <Stack.Screen name="profile" options={{ headerShown: false }} />
+        <Stack.Screen name="login" options={{ headerShown: false }} />
+        <Stack.Screen name="register" options={{ headerShown: false }} />
         <Stack.Screen name="vehicle/[id]" options={{ headerShown: false }} />
         <Stack.Screen name="compare" options={{ headerShown: false }} />
         <Stack.Screen name="test-drive" options={{ headerShown: false }} />
@@ -42,8 +48,8 @@ function AppNavigation() {
         <Stack.Screen name="offers" options={{ headerShown: false }} />
         <Stack.Screen name="about" options={{ headerShown: false }} />
         <Stack.Screen name="contact" options={{ headerShown: false }} />
-        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
         <Stack.Screen name="admin" options={{ headerShown: false }} />
+        <Stack.Screen name="+not-found" options={{ headerShown: false }} />
       </Stack>
     </>
   );

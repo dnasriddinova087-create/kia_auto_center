@@ -1,4 +1,4 @@
-// Login Screen for KIA AUTO CENTER
+// Customer Login Screen for KIA AUTO CENTER
 // Owner: Nasriddinova Dilfuza
 
 import React, { useState } from 'react';
@@ -10,13 +10,13 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Mail, Lock, ShieldCheck, User, ArrowLeft } from 'lucide-react-native';
-import { CustomInput } from '../../components/CustomInput';
-import { CustomButton } from '../../components/CustomButton';
-import { useTheme } from '../../context/ThemeContext';
-import { useLanguage } from '../../context/LanguageContext';
-import { useAuth } from '../../context/AuthContext';
-import { COLORS, RADIUS } from '../../constants/theme';
+import { Mail, Lock, ShieldCheck, User, ArrowLeft, Eye, EyeOff } from 'lucide-react-native';
+import { CustomInput } from '../components/CustomInput';
+import { CustomButton } from '../components/CustomButton';
+import { useTheme } from '../context/ThemeContext';
+import { useLanguage } from '../context/LanguageContext';
+import { useAuth } from '../context/AuthContext';
+import { COLORS, RADIUS } from '../constants/theme';
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -26,6 +26,7 @@ export default function LoginScreen() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -41,7 +42,7 @@ export default function LoginScreen() {
     setLoading(false);
 
     if (res.success) {
-      router.replace('/(tabs)/profile');
+      router.replace('/profile');
     } else {
       setError(res.error || 'Kirishda xatolik yuz berdi');
     }
@@ -49,7 +50,7 @@ export default function LoginScreen() {
 
   const handleDemo = async (role: any) => {
     await loginAsDemo(role);
-    router.replace('/(tabs)/profile');
+    router.replace('/profile');
   };
 
   return (
@@ -86,7 +87,7 @@ export default function LoginScreen() {
 
           <CustomInput
             label="Elektron pochta"
-            placeholder="admin@kia-autocenter.uz"
+            placeholder="customer@kia-autocenter.uz"
             keyboardType="email-address"
             autoCapitalize="none"
             value={email}
@@ -94,14 +95,26 @@ export default function LoginScreen() {
             icon={<Mail size={18} color={colors.textMuted} />}
           />
 
-          <CustomInput
-            label="Parol"
-            placeholder="••••••••"
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-            icon={<Lock size={18} color={colors.textMuted} />}
-          />
+          <View style={{ position: 'relative' }}>
+            <CustomInput
+              label="Parol"
+              placeholder="••••••••"
+              secureTextEntry={!showPassword}
+              value={password}
+              onChangeText={setPassword}
+              icon={<Lock size={18} color={colors.textMuted} />}
+            />
+            <TouchableOpacity
+              onPress={() => setShowPassword(!showPassword)}
+              style={styles.eyeBtn}
+            >
+              {showPassword ? (
+                <EyeOff size={18} color={colors.textSecondary} />
+              ) : (
+                <Eye size={18} color={colors.textSecondary} />
+              )}
+            </TouchableOpacity>
+          </View>
 
           <CustomButton
             title={t('navLogin')}
@@ -112,48 +125,46 @@ export default function LoginScreen() {
             style={{ marginTop: 8 }}
           />
 
-          <View style={styles.registerRow}>
-            <Text style={{ color: colors.textSecondary, fontSize: 13 }}>
-              Hisobingiz yo‘qmi?
+          <View style={styles.footerRow}>
+            <Text style={[styles.footerText, { color: colors.textSecondary }]}>
+              Hali hisobingiz yo‘qmi?
             </Text>
-            <TouchableOpacity onPress={() => router.push('/(auth)/register' as any)}>
-              <Text style={styles.registerLink}>{t('navRegister')}</Text>
+            <TouchableOpacity onPress={() => router.push('/register')}>
+              <Text style={styles.linkText}> {t('navRegister')}</Text>
             </TouchableOpacity>
           </View>
 
-          {/* Quick Demo Access Bar */}
-          <View style={styles.demoSection}>
-            <Text style={[styles.demoTitle, { color: colors.textSecondary }]}>
-              Tezkor kirish (Sinov profillari):
+          {/* Quick Demo Login */}
+          <View style={styles.dividerRow}>
+            <View style={[styles.divider, { backgroundColor: colors.border }]} />
+            <Text style={[styles.dividerText, { color: colors.textMuted }]}>
+              YOKI TEZKOR KIRISH
             </Text>
-            <View style={styles.demoButtons}>
-              <TouchableOpacity
-                onPress={() => handleDemo('super_admin')}
-                style={[styles.demoBtn, { backgroundColor: '#B91C1C' }]}
-              >
-                <ShieldCheck size={14} color="#FFFFFF" />
-                <Text style={styles.demoBtnText}>Super Admin (Nasriddinova Dilfuza)</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                onPress={() => handleDemo('sales_consultant')}
-                style={[styles.demoBtn, { backgroundColor: '#1E40AF' }]}
-              >
-                <User size={14} color="#FFFFFF" />
-                <Text style={styles.demoBtnText}>Sotuvchi (Alisher)</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                onPress={() => handleDemo('customer')}
-                style={[styles.demoBtn, { backgroundColor: isDark ? '#333' : '#E5E7EB' }]}
-              >
-                <User size={14} color={isDark ? '#FFF' : '#111'} />
-                <Text style={[styles.demoBtnText, { color: isDark ? '#FFF' : '#111' }]}>
-                  Mijoz (Dilshod)
-                </Text>
-              </TouchableOpacity>
-            </View>
+            <View style={[styles.divider, { backgroundColor: colors.border }]} />
           </View>
+
+          <View style={styles.demoGroup}>
+            <TouchableOpacity
+              onPress={() => handleDemo('customer')}
+              style={[styles.demoBtn, { backgroundColor: isDark ? '#222' : '#F3F4F6' }]}
+            >
+              <User size={15} color={colors.text} />
+              <Text style={[styles.demoBtnLabel, { color: colors.text }]}>
+                Mijoz profili (Dilshod)
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Staff Login Link */}
+          <TouchableOpacity
+            onPress={() => router.push('/admin/login')}
+            style={styles.adminPortalLink}
+          >
+            <ShieldCheck size={16} color={COLORS.kiaRed} />
+            <Text style={styles.adminPortalText}>
+              Administrator va Xodimlar Portali →
+            </Text>
+          </TouchableOpacity>
         </View>
       </View>
     </ScrollView>
@@ -165,10 +176,10 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    padding: 16,
   },
   boxWrapper: {
-    maxWidth: 480,
+    maxWidth: 440,
     width: '100%',
   },
   backBtn: {
@@ -176,45 +187,45 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 6,
     marginBottom: 16,
+    alignSelf: 'flex-start',
   },
   backText: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '600',
   },
   card: {
     borderRadius: RADIUS.xl,
     borderWidth: 1,
     padding: 32,
+    width: '100%',
   },
   logoRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    marginBottom: 16,
+    marginBottom: 20,
   },
   logoBadge: {
-    backgroundColor: '#000',
-    borderWidth: 1.5,
-    borderColor: COLORS.kiaRed,
+    backgroundColor: COLORS.kiaRed,
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: RADIUS.sm,
   },
   logoKia: {
     color: '#FFF',
-    fontWeight: '900',
     fontSize: 14,
+    fontWeight: '900',
     letterSpacing: 2,
   },
   brandText: {
     fontSize: 14,
     fontWeight: '900',
-    letterSpacing: 1,
+    letterSpacing: 1.5,
   },
   title: {
-    fontSize: 26,
-    fontWeight: '800',
-    marginBottom: 4,
+    fontSize: 24,
+    fontWeight: '900',
+    marginBottom: 6,
   },
   subtitle: {
     fontSize: 14,
@@ -223,49 +234,71 @@ const styles = StyleSheet.create({
   errorText: {
     color: COLORS.danger,
     fontSize: 13,
-    marginBottom: 12,
+    marginBottom: 14,
     fontWeight: '600',
   },
-  registerRow: {
+  eyeBtn: {
+    position: 'absolute',
+    right: 14,
+    top: 38,
+    padding: 4,
+  },
+  footerRow: {
     flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center',
-    gap: 6,
     marginTop: 20,
+    alignItems: 'center',
   },
-  registerLink: {
-    color: COLORS.kiaRed,
-    fontWeight: '700',
+  footerText: {
     fontSize: 13,
   },
-  demoSection: {
-    marginTop: 24,
-    paddingTop: 16,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(150, 150, 150, 0.15)',
+  linkText: {
+    color: COLORS.kiaRed,
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  dividerRow: {
+    flexDirection: 'row',
     alignItems: 'center',
+    marginVertical: 24,
+    gap: 12,
   },
-  demoTitle: {
-    fontSize: 12,
-    fontWeight: '600',
-    marginBottom: 10,
-    textTransform: 'uppercase',
+  divider: {
+    flex: 1,
+    height: 1,
   },
-  demoButtons: {
+  dividerText: {
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  demoGroup: {
     gap: 8,
-    width: '100%',
   },
   demoBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 10,
-    borderRadius: RADIUS.md,
     gap: 8,
+    paddingVertical: 12,
+    borderRadius: RADIUS.md,
   },
-  demoBtnText: {
-    color: '#FFF',
-    fontSize: 12,
+  demoBtnLabel: {
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  adminPortalLink: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    marginTop: 20,
+    paddingTop: 16,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(150,150,150,0.15)',
+  },
+  adminPortalText: {
+    color: COLORS.kiaRed,
+    fontSize: 13,
     fontWeight: '700',
   },
 });

@@ -18,7 +18,7 @@ interface AuthContextType {
   updateProfile: (data: Partial<UserProfile>) => Promise<void>;
 }
 
-const STORAGE_KEY = 'kia_auth_profile_v1';
+const STORAGE_KEY = 'kia_auth_profile_v2';
 
 export const DEMO_USERS: Record<string, UserProfile> = {
   super_admin: {
@@ -31,12 +31,52 @@ export const DEMO_USERS: Record<string, UserProfile> = {
     city: 'Tashkent',
     createdAt: new Date().toISOString(),
   },
-  sales_consultant: {
+  admin: {
+    id: 'usr-admin-manager',
+    fullName: 'Farrux Qodirov',
+    email: 'manager@kia-autocenter.uz',
+    phone: '+998 90 999 88 77',
+    role: 'admin',
+    preferredLanguage: 'uz',
+    city: 'Tashkent',
+    createdAt: new Date().toISOString(),
+  },
+  sales_manager: {
     id: 'usr-sales-alisher',
     fullName: 'Alisher Shodiyev',
     email: 'sales@kia-autocenter.uz',
     phone: '+998 90 123 45 67',
-    role: 'sales_consultant',
+    role: 'sales_manager',
+    preferredLanguage: 'uz',
+    city: 'Tashkent',
+    createdAt: new Date().toISOString(),
+  },
+  service_manager: {
+    id: 'usr-service-bobur',
+    fullName: 'Bobur Rustamov',
+    email: 'service@kia-autocenter.uz',
+    phone: '+998 94 620 90 80',
+    role: 'service_manager',
+    preferredLanguage: 'uz',
+    city: 'Tashkent',
+    createdAt: new Date().toISOString(),
+  },
+  consultant: {
+    id: 'usr-consultant-kamola',
+    fullName: 'Kamola Karimova',
+    email: 'consultant@kia-autocenter.uz',
+    phone: '+998 93 500 11 22',
+    role: 'consultant',
+    preferredLanguage: 'uz',
+    city: 'Tashkent',
+    createdAt: new Date().toISOString(),
+  },
+  report_viewer: {
+    id: 'usr-report-ulugbek',
+    fullName: 'Ulug‘bek Salimov',
+    email: 'reports@kia-autocenter.uz',
+    phone: '+998 99 333 22 11',
+    role: 'report_viewer',
     preferredLanguage: 'uz',
     city: 'Tashkent',
     createdAt: new Date().toISOString(),
@@ -78,9 +118,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const stored = await AsyncStorage.getItem(STORAGE_KEY);
       if (stored) {
         setUser(JSON.parse(stored));
-      } else {
-        // Default guest starts logged in as demo customer or null
-        // Let's keep null until user selects or logs in
       }
     } catch {
       // ignore
@@ -119,17 +156,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       }
 
-      // Check demo credentials or create session
+      // Check predefined accounts (e.g. Dilfuza, Alisher, etc.)
+      const normalizedEmail = email.trim().toLowerCase();
       const foundDemo = Object.values(DEMO_USERS).find(
-        (u) => u.email.toLowerCase() === email.toLowerCase()
+        (u) => u.email.toLowerCase() === normalizedEmail
       );
+
+      let role: UserRole = 'customer';
+      if (normalizedEmail.includes('admin') || normalizedEmail.includes('dilfuza')) {
+        role = 'super_admin';
+      } else if (normalizedEmail.includes('sales')) {
+        role = 'sales_manager';
+      } else if (normalizedEmail.includes('service')) {
+        role = 'service_manager';
+      } else if (normalizedEmail.includes('manager')) {
+        role = 'admin';
+      } else if (foundDemo) {
+        role = foundDemo.role;
+      }
 
       const profile: UserProfile = foundDemo || {
         id: `usr-${Date.now()}`,
-        email,
-        fullName: email.split('@')[0],
+        email: normalizedEmail,
+        fullName: email.split('@')[0].toUpperCase(),
         phone: '+998 90 123 45 67',
-        role: email.includes('admin') ? 'super_admin' : 'customer',
+        role,
         preferredLanguage: 'uz',
         createdAt: new Date().toISOString(),
       };
@@ -140,7 +191,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return { success: true };
     } catch (e: any) {
       setIsLoading(false);
-      return { success: false, error: e?.message || 'Login error' };
+      return { success: false, error: e?.message || 'Kirishda xatolik yuz berdi' };
     }
   };
 
@@ -181,7 +232,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const newProfile: UserProfile = {
         id: `usr-${Date.now()}`,
         fullName,
-        email,
+        email: email.trim().toLowerCase(),
         phone,
         role: 'customer',
         preferredLanguage: 'uz',
@@ -194,7 +245,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return { success: true };
     } catch (e: any) {
       setIsLoading(false);
-      return { success: false, error: e?.message || 'Registration error' };
+      return { success: false, error: e?.message || 'Ro‘yxatdan o‘tishda xatolik yuz berdi' };
     }
   };
 
@@ -216,9 +267,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const isAdmin = user?.role === 'super_admin' || user?.role === 'admin';
   const isStaff =
     isAdmin ||
-    user?.role === 'manager' ||
-    user?.role === 'sales_consultant' ||
-    user?.role === 'service_manager';
+    user?.role === 'sales_manager' ||
+    user?.role === 'service_manager' ||
+    user?.role === 'consultant' ||
+    user?.role === 'report_viewer';
 
   return (
     <AuthContext.Provider

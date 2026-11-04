@@ -7,7 +7,6 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  Platform,
   useWindowDimensions,
   Modal,
 } from 'react-native';
@@ -50,8 +49,8 @@ export const Navbar: React.FC = () => {
   const isDesktop = width >= 1024;
 
   const navLinks = [
-    { label: t('navCatalog'), href: '/(tabs)/catalog', icon: Car },
-    { label: t('navCalculator'), href: '/(tabs)/calculator', icon: Calculator },
+    { label: t('navCatalog'), href: '/catalog', icon: Car },
+    { label: t('navCalculator'), href: '/calculator', icon: Calculator },
     { label: t('navCompare'), href: '/compare', icon: GitCompare },
     { label: t('navTestDrive'), href: '/test-drive', icon: Calendar },
     { label: t('navService'), href: '/service', icon: Wrench },
@@ -95,7 +94,7 @@ export const Navbar: React.FC = () => {
         {isDesktop && (
           <View style={styles.desktopLinks}>
             {navLinks.map((link) => {
-              const isActive = pathname === link.href || pathname.startsWith(link.href);
+              const isActive = pathname === link.href;
               return (
                 <TouchableOpacity
                   key={link.href}
@@ -122,8 +121,32 @@ export const Navbar: React.FC = () => {
           </View>
         )}
 
-        {/* Right Tools (Language, Theme, Favorites, Auth, Mobile Toggle) */}
+        {/* Right Tools (Language, Theme Mode Pill, Favorites, Auth, Mobile Toggle) */}
         <View style={styles.rightSection}>
+          {/* Prominent Theme Mode Toggle Pill */}
+          <TouchableOpacity
+            onPress={toggleTheme}
+            style={[
+              styles.themePill,
+              {
+                backgroundColor: isDark ? '#222222' : '#F3F4F6',
+                borderColor: isDark ? '#333333' : '#E5E7EB',
+              },
+            ]}
+          >
+            {isDark ? (
+              <>
+                <Sun size={15} color="#FBBF24" />
+                <Text style={[styles.themePillText, { color: '#F9FAFB' }]}>Kunduzgi</Text>
+              </>
+            ) : (
+              <>
+                <Moon size={15} color="#111827" />
+                <Text style={[styles.themePillText, { color: '#111827' }]}>Tungi</Text>
+              </>
+            )}
+          </TouchableOpacity>
+
           {/* Language Selector */}
           <View style={[styles.langSwitch, { backgroundColor: isDark ? '#222222' : '#F3F4F6' }]}>
             {(['uz', 'ru', 'en'] as Language[]).map((lang) => (
@@ -150,21 +173,9 @@ export const Navbar: React.FC = () => {
             ))}
           </View>
 
-          {/* Theme Toggle */}
-          <TouchableOpacity
-            onPress={toggleTheme}
-            style={[styles.iconButton, { backgroundColor: isDark ? '#222222' : '#F3F4F6' }]}
-          >
-            {isDark ? (
-              <Sun size={17} color="#FBBF24" />
-            ) : (
-              <Moon size={17} color={colors.text} />
-            )}
-          </TouchableOpacity>
-
           {/* Favorites */}
           <TouchableOpacity
-            onPress={() => handleNavigate('/(tabs)/favorites')}
+            onPress={() => handleNavigate('/favorites')}
             style={[styles.iconButton, { backgroundColor: isDark ? '#222222' : '#F3F4F6' }]}
           >
             <Heart
@@ -179,21 +190,19 @@ export const Navbar: React.FC = () => {
             )}
           </TouchableOpacity>
 
-          {/* Admin shortcut if staff */}
-          {isStaff && (
-            <TouchableOpacity
-              onPress={() => handleNavigate('/admin')}
-              style={[styles.adminBtn, { backgroundColor: '#B91C1C' }]}
-            >
-              <ShieldCheck size={14} color="#FFFFFF" />
-              {isDesktop && <Text style={styles.adminBtnText}>Admin</Text>}
-            </TouchableOpacity>
-          )}
+          {/* Admin Fast Button (Always visible for easy testing and for staff) */}
+          <TouchableOpacity
+            onPress={() => handleNavigate(isStaff ? '/admin/dashboard' : '/admin/login')}
+            style={[styles.adminBtn, { backgroundColor: '#B91C1C' }]}
+          >
+            <ShieldCheck size={14} color="#FFFFFF" />
+            <Text style={styles.adminBtnText}>Admin</Text>
+          </TouchableOpacity>
 
-          {/* Auth Button */}
+          {/* Customer Auth Button */}
           {user ? (
             <TouchableOpacity
-              onPress={() => handleNavigate('/(tabs)/profile')}
+              onPress={() => handleNavigate('/profile')}
               style={[styles.profileBtn, { backgroundColor: isDark ? '#222222' : '#F3F4F6' }]}
             >
               <User size={16} color={colors.text} />
@@ -205,7 +214,7 @@ export const Navbar: React.FC = () => {
             </TouchableOpacity>
           ) : (
             <TouchableOpacity
-              onPress={() => handleNavigate('/(auth)/login')}
+              onPress={() => handleNavigate('/login')}
               style={[styles.loginBtn, { backgroundColor: COLORS.kiaRed }]}
             >
               <User size={14} color="#FFFFFF" />
@@ -238,6 +247,31 @@ export const Navbar: React.FC = () => {
               </TouchableOpacity>
             </View>
 
+            {/* Mobile Theme Toggle Pill */}
+            <TouchableOpacity
+              onPress={toggleTheme}
+              style={[
+                styles.mobileThemePill,
+                { backgroundColor: isDark ? '#222222' : '#F3F4F6', borderColor: colors.border },
+              ]}
+            >
+              {isDark ? (
+                <>
+                  <Sun size={18} color="#FBBF24" />
+                  <Text style={[styles.mobileThemeText, { color: colors.text }]}>
+                    Kunduzgi rejimga o‘tish (Light Mode)
+                  </Text>
+                </>
+              ) : (
+                <>
+                  <Moon size={18} color="#111827" />
+                  <Text style={[styles.mobileThemeText, { color: colors.text }]}>
+                    Tungi rejimga o‘tish (Dark Mode)
+                  </Text>
+                </>
+              )}
+            </TouchableOpacity>
+
             <View style={styles.mobileLinks}>
               {navLinks.map((link) => {
                 const Icon = link.icon;
@@ -255,17 +289,15 @@ export const Navbar: React.FC = () => {
                 );
               })}
 
-              {isStaff && (
-                <TouchableOpacity
-                  onPress={() => handleNavigate('/admin')}
-                  style={[styles.mobileNavItem, { borderBottomColor: colors.border }]}
-                >
-                  <ShieldCheck size={20} color="#EF4444" />
-                  <Text style={[styles.mobileNavText, { color: '#EF4444', fontWeight: '700' }]}>
-                    {t('adminDashboard')}
-                  </Text>
-                </TouchableOpacity>
-              )}
+              <TouchableOpacity
+                onPress={() => handleNavigate('/admin/dashboard')}
+                style={[styles.mobileNavItem, { borderBottomColor: colors.border }]}
+              >
+                <ShieldCheck size={20} color="#B91C1C" />
+                <Text style={[styles.mobileNavText, { color: '#B91C1C', fontWeight: '800' }]}>
+                  KIA Admin Panel
+                </Text>
+              </TouchableOpacity>
             </View>
           </View>
         </View>
@@ -276,31 +308,28 @@ export const Navbar: React.FC = () => {
 
 const styles = StyleSheet.create({
   navbar: {
-    width: '100%',
     borderBottomWidth: 1,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
     zIndex: 100,
   },
   navContainer: {
-    maxWidth: 1320,
+    maxWidth: 1360,
     width: '100%',
     alignSelf: 'center',
-    paddingHorizontal: 16,
-    height: 70,
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
+    alignItems: 'center',
   },
   logoContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: 12,
   },
   logoBadge: {
-    backgroundColor: '#111111',
-    borderWidth: 1.5,
-    borderColor: COLORS.kiaRed,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
+    backgroundColor: COLORS.kiaRed,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
     borderRadius: RADIUS.sm,
   },
   logoKia: {
@@ -310,47 +339,56 @@ const styles = StyleSheet.create({
     letterSpacing: 2,
   },
   brandTitle: {
-    fontSize: 14,
     fontWeight: '900',
-    letterSpacing: 1,
+    fontSize: 15,
+    letterSpacing: 1.5,
   },
   brandSub: {
     fontSize: 9,
-    color: COLORS.kiaRed,
     fontWeight: '700',
-    letterSpacing: 1.5,
+    color: COLORS.kiaRed,
+    letterSpacing: 2,
   },
   desktopLinks: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 18,
-    height: '100%',
   },
   navItem: {
-    height: '100%',
-    justifyContent: 'center',
+    paddingVertical: 6,
     borderBottomWidth: 2,
     borderBottomColor: 'transparent',
-    paddingHorizontal: 4,
   },
   navText: {
     fontSize: 13,
-    letterSpacing: 0.2,
   },
   rightSection: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
   },
+  themePill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: RADIUS.full,
+    borderWidth: 1,
+  },
+  themePillText: {
+    fontSize: 12,
+    fontWeight: '700',
+  },
   langSwitch: {
     flexDirection: 'row',
-    borderRadius: RADIUS.sm,
+    borderRadius: RADIUS.md,
     padding: 2,
   },
   langBtn: {
-    paddingHorizontal: 6,
+    paddingHorizontal: 7,
     paddingVertical: 4,
-    borderRadius: 4,
+    borderRadius: RADIUS.sm,
   },
   langText: {
     fontSize: 11,
@@ -365,52 +403,53 @@ const styles = StyleSheet.create({
   },
   badgeCount: {
     position: 'absolute',
-    top: -3,
-    right: -3,
+    top: -4,
+    right: -4,
     backgroundColor: COLORS.kiaRed,
     borderRadius: RADIUS.full,
-    width: 16,
+    minWidth: 16,
     height: 16,
     alignItems: 'center',
     justifyContent: 'center',
+    paddingHorizontal: 4,
   },
   badgeText: {
     color: '#FFFFFF',
-    fontSize: 10,
+    fontSize: 9,
     fontWeight: '800',
   },
   adminBtn: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 6,
     paddingHorizontal: 10,
     paddingVertical: 7,
     borderRadius: RADIUS.md,
-    gap: 5,
   },
   adminBtnText: {
     color: '#FFFFFF',
     fontSize: 12,
-    fontWeight: '700',
+    fontWeight: '800',
   },
   profileBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 10,
+    gap: 6,
+    paddingHorizontal: 12,
     paddingVertical: 7,
     borderRadius: RADIUS.md,
-    gap: 6,
   },
   profileText: {
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: '700',
   },
   loginBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 14,
+    gap: 6,
+    paddingHorizontal: 12,
     paddingVertical: 7,
     borderRadius: RADIUS.md,
-    gap: 6,
   },
   loginBtnText: {
     color: '#FFFFFF',
@@ -420,20 +459,35 @@ const styles = StyleSheet.create({
   mobileOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.6)',
+    justifyContent: 'flex-start',
   },
   mobileMenu: {
-    flex: 1,
-    maxWidth: 320,
+    width: '85%',
+    maxWidth: 360,
+    height: '100%',
     padding: 20,
   },
   mobileHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 24,
+    marginBottom: 20,
   },
   closeBtn: {
     padding: 6,
+  },
+  mobileThemePill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    padding: 12,
+    borderRadius: RADIUS.md,
+    borderWidth: 1,
+    marginBottom: 16,
+  },
+  mobileThemeText: {
+    fontSize: 13,
+    fontWeight: '700',
   },
   mobileLinks: {
     gap: 4,

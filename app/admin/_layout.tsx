@@ -1,7 +1,7 @@
-// Admin Layout & Navigation
+// Comprehensive Admin Layout & Central Navigation for KIA AUTO CENTER
 // Owner: Nasriddinova Dilfuza
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -21,30 +21,69 @@ import {
   Settings,
   ArrowLeft,
   ShieldCheck,
+  ShoppingBag,
+  UserCheck,
+  Package,
+  CircleDollarSign,
+  FileSpreadsheet,
+  Bell,
+  Sun,
+  Moon,
+  LogOut,
+  Globe,
+  Sliders,
 } from 'lucide-react-native';
 import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { useAuth } from '../../context/AuthContext';
+import { mockStore } from '../../lib/mockStore';
 import { COLORS, RADIUS } from '../../constants/theme';
+import { Language, AdminNotification } from '../../types';
 
 export default function AdminLayout() {
   const router = useRouter();
   const pathname = usePathname();
   const { width } = useWindowDimensions();
-  const { colors, isDark } = useTheme();
-  const { t } = useLanguage();
-  const { user } = useAuth();
+  const { colors, toggleTheme, isDark } = useTheme();
+  const { language, setLanguage } = useLanguage();
+  const { user, isStaff, logout, loginAsDemo } = useAuth();
 
-  const isWide = width >= 900;
+  const [notifications, setNotifications] = useState<AdminNotification[]>([]);
+
+  useEffect(() => {
+    mockStore.getNotifications().then(setNotifications).catch(() => {});
+  }, [pathname]);
+
+  const unreadCount = notifications.filter((n) => !n.isRead).length;
+
+  const isWide = width >= 992;
+  const isLoginPage = pathname === '/admin/login';
+
+  // If on login page, render clean page without sidebar
+  if (isLoginPage) {
+    return (
+      <View style={[styles.container, { backgroundColor: colors.bg }]}>
+        <Slot />
+      </View>
+    );
+  }
 
   const adminNav = [
-    { label: t('adminDashboard'), href: '/admin', icon: LayoutDashboard },
-    { label: t('adminVehicles'), href: '/admin/vehicles', icon: Car },
-    { label: t('adminLeads'), href: '/admin/leads', icon: Users },
-    { label: t('adminTestDrives'), href: '/admin/test-drives', icon: Calendar },
-    { label: t('adminServices'), href: '/admin/services', icon: Wrench },
-    { label: t('adminBranches'), href: '/admin/branches', icon: Building },
-    { label: t('adminSettings'), href: '/admin/settings', icon: Settings },
+    { label: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
+    { label: 'Avtomobillar', href: '/admin/vehicles', icon: Car },
+    { label: 'Mijozlar', href: '/admin/customers', icon: Users },
+    { label: 'CRM Arizalar', href: '/admin/crm', icon: Users },
+    { label: 'Sotuvlar', href: '/admin/sales', icon: ShoppingBag },
+    { label: 'Test-Drayv', href: '/admin/test-drives', icon: Calendar },
+    { label: 'Servis Markazi', href: '/admin/service', icon: Wrench },
+    { label: 'Xodimlar', href: '/admin/employees', icon: UserCheck },
+    { label: 'Ombor & Zaxira', href: '/admin/inventory', icon: Package },
+    { label: 'Moliya & Kredit', href: '/admin/finance', icon: CircleDollarSign },
+    { label: 'Filiallar', href: '/admin/branches', icon: Building },
+    { label: 'Sayt Kontenti', href: '/admin/content', icon: Sliders },
+    { label: 'Hisobotlar', href: '/admin/reports', icon: FileSpreadsheet },
+    { label: 'Bildirishnomalar', href: '/admin/notifications', icon: Bell, badge: unreadCount },
+    { label: 'Tizim Sozlamalari', href: '/admin/settings', icon: Settings },
   ];
 
   return (
@@ -53,45 +92,146 @@ export default function AdminLayout() {
       <View
         style={[
           styles.topBar,
-          { backgroundColor: isDark ? '#141414' : '#FFFFFF', borderBottomColor: colors.border },
+          {
+            backgroundColor: isDark ? '#141414' : '#FFFFFF',
+            borderBottomColor: colors.border,
+          },
         ]}
       >
         <View style={styles.topBarLeft}>
-          <TouchableOpacity onPress={() => router.push('/(tabs)')} style={styles.exitBtn}>
+          <TouchableOpacity onPress={() => router.push('/')} style={styles.exitBtn}>
             <ArrowLeft size={16} color={colors.textSecondary} />
-            <Text style={[styles.exitText, { color: colors.textSecondary }]}>Platformaga qaytish</Text>
+            <Text style={[styles.exitText, { color: colors.textSecondary }]}>
+              Saytga qaytish
+            </Text>
           </TouchableOpacity>
 
           <View style={styles.brandTitleWrap}>
             <View style={styles.badgeKia}>
               <Text style={styles.badgeKiaText}>KIA</Text>
             </View>
-            <Text style={[styles.adminTitle, { color: colors.text }]}>
-              ADMIN PANEL • {user?.fullName || 'Nasriddinova Dilfuza'}
-            </Text>
+            <View>
+              <Text style={[styles.adminTitle, { color: colors.text }]}>
+                BOSHQARUV TIZIMI
+              </Text>
+              <Text style={styles.adminOwner}>
+                Loyiha egasi: Nasriddinova Dilfuza
+              </Text>
+            </View>
           </View>
         </View>
 
-        <View style={styles.roleTag}>
-          <ShieldCheck size={14} color="#FFF" />
-          <Text style={styles.roleTagText}>SUPER ADMIN</Text>
+        <View style={styles.topBarRight}>
+          {/* Prominent Theme Toggle Pill */}
+          <TouchableOpacity
+            onPress={toggleTheme}
+            style={[
+              styles.themeTogglePill,
+              {
+                backgroundColor: isDark ? '#222222' : '#F3F4F6',
+                borderColor: colors.border,
+              },
+            ]}
+          >
+            {isDark ? (
+              <>
+                <Sun size={14} color="#FBBF24" />
+                <Text style={[styles.themePillText, { color: '#FFF' }]}>Kunduzgi</Text>
+              </>
+            ) : (
+              <>
+                <Moon size={14} color="#111" />
+                <Text style={[styles.themePillText, { color: '#111' }]}>Tungi</Text>
+              </>
+            )}
+          </TouchableOpacity>
+
+          {/* Language Selector */}
+          <View style={[styles.langSwitch, { backgroundColor: isDark ? '#222222' : '#F3F4F6' }]}>
+            {(['uz', 'ru', 'en'] as Language[]).map((lang) => (
+              <TouchableOpacity
+                key={lang}
+                onPress={() => setLanguage(lang)}
+                style={[
+                  styles.langBtn,
+                  language === lang && { backgroundColor: COLORS.kiaRed },
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.langText,
+                    {
+                      color: language === lang ? '#FFFFFF' : colors.textSecondary,
+                      fontWeight: language === lang ? '700' : '500',
+                    },
+                  ]}
+                >
+                  {lang.toUpperCase()}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          {/* Notifications Icon Button */}
+          <TouchableOpacity
+            onPress={() => router.push('/admin/notifications')}
+            style={[
+              styles.iconBtn,
+              { backgroundColor: isDark ? '#222222' : '#F3F4F6' },
+            ]}
+          >
+            <Bell size={16} color={colors.text} />
+            {unreadCount > 0 && (
+              <View style={styles.notifBadge}>
+                <Text style={styles.notifBadgeText}>{unreadCount}</Text>
+              </View>
+            )}
+          </TouchableOpacity>
+
+          {/* Role badge */}
+          <View style={styles.roleTag}>
+            <ShieldCheck size={13} color="#FFF" />
+            <Text style={styles.roleTagText}>
+              {user ? user.role.toUpperCase().replace('_', ' ') : 'SUPER ADMIN'}
+            </Text>
+          </View>
+
+          {/* Logout */}
+          <TouchableOpacity
+            onPress={async () => {
+              await logout();
+              router.replace('/admin/login');
+            }}
+            style={styles.logoutBtn}
+          >
+            <LogOut size={16} color={COLORS.danger} />
+          </TouchableOpacity>
         </View>
       </View>
 
       <View style={[styles.body, isWide && styles.bodyWide]}>
-        {/* Sidebar for Desktop / Tablet */}
+        {/* Sidebar Navigation */}
         <View
           style={[
             styles.sidebar,
-            { backgroundColor: isDark ? '#141414' : '#FFFFFF', borderRightColor: colors.border },
+            {
+              backgroundColor: isDark ? '#141414' : '#FFFFFF',
+              borderRightColor: colors.border,
+            },
             !isWide && styles.sidebarMobile,
           ]}
         >
-          <ScrollView horizontal={!isWide} showsHorizontalScrollIndicator={false}>
+          <ScrollView
+            horizontal={!isWide}
+            showsHorizontalScrollIndicator={false}
+            showsVerticalScrollIndicator={false}
+          >
             <View style={[styles.navList, !isWide && styles.navListMobile]}>
               {adminNav.map((item) => {
                 const Icon = item.icon;
-                const isActive = pathname === item.href;
+                const isActive =
+                  pathname === item.href ||
+                  (item.href === '/admin/dashboard' && pathname === '/admin');
                 return (
                   <TouchableOpacity
                     key={item.href}
@@ -99,23 +239,39 @@ export default function AdminLayout() {
                     style={[
                       styles.navItem,
                       isActive && {
-                        backgroundColor: isDark ? '#262626' : '#FEE2E2',
-                        borderLeftColor: COLORS.kiaRed,
+                        backgroundColor: COLORS.kiaRed,
                       },
                     ]}
                   >
-                    <Icon size={18} color={isActive ? COLORS.kiaRed : colors.textSecondary} />
+                    <Icon size={17} color={isActive ? '#FFFFFF' : colors.textSecondary} />
                     <Text
                       style={[
-                        styles.navText,
+                        styles.navItemText,
                         {
-                          color: isActive ? COLORS.kiaRed : colors.text,
+                          color: isActive ? '#FFFFFF' : colors.textSecondary,
                           fontWeight: isActive ? '700' : '500',
                         },
                       ]}
                     >
                       {item.label}
                     </Text>
+                    {Boolean(item.badge && item.badge > 0) && (
+                      <View
+                        style={[
+                          styles.navBadge,
+                          { backgroundColor: isActive ? '#FFFFFF' : COLORS.kiaRed },
+                        ]}
+                      >
+                        <Text
+                          style={[
+                            styles.navBadgeText,
+                            { color: isActive ? COLORS.kiaRed : '#FFFFFF' },
+                          ]}
+                        >
+                          {item.badge}
+                        </Text>
+                      </View>
+                    )}
                   </TouchableOpacity>
                 );
               })}
@@ -124,9 +280,13 @@ export default function AdminLayout() {
         </View>
 
         {/* Content Area */}
-        <View style={styles.content}>
+        <ScrollView
+          style={styles.mainContent}
+          contentContainerStyle={styles.mainContentContainer}
+          showsVerticalScrollIndicator={false}
+        >
           <Slot />
-        </View>
+        </ScrollView>
       </View>
     </View>
   );
@@ -137,7 +297,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   topBar: {
-    height: 60,
+    height: 64,
     borderBottomWidth: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -154,7 +314,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    paddingRight: 16,
+    paddingRight: 14,
     borderRightWidth: 1,
     borderRightColor: 'rgba(150,150,150,0.2)',
   },
@@ -165,80 +325,163 @@ const styles = StyleSheet.create({
   brandTitleWrap: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 10,
   },
   badgeKia: {
-    backgroundColor: '#000',
-    borderWidth: 1.5,
-    borderColor: COLORS.kiaRed,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 4,
+    backgroundColor: COLORS.kiaRed,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: RADIUS.sm,
   },
   badgeKiaText: {
     color: '#FFF',
     fontSize: 12,
     fontWeight: '900',
+    letterSpacing: 2,
   },
   adminTitle: {
-    fontSize: 14,
+    fontSize: 13,
+    fontWeight: '900',
+    letterSpacing: 1,
+  },
+  adminOwner: {
+    fontSize: 10,
+    color: '#888',
+  },
+  topBarRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  themeTogglePill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: RADIUS.full,
+    borderWidth: 1,
+  },
+  themePillText: {
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  langSwitch: {
+    flexDirection: 'row',
+    borderRadius: RADIUS.md,
+    padding: 2,
+  },
+  langBtn: {
+    paddingHorizontal: 6,
+    paddingVertical: 4,
+    borderRadius: RADIUS.sm,
+  },
+  langText: {
+    fontSize: 10,
+  },
+  iconBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: RADIUS.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+  },
+  notifBadge: {
+    position: 'absolute',
+    top: -3,
+    right: -3,
+    backgroundColor: COLORS.kiaRed,
+    borderRadius: RADIUS.full,
+    minWidth: 14,
+    height: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 3,
+  },
+  notifBadgeText: {
+    color: '#FFF',
+    fontSize: 8,
     fontWeight: '800',
-    letterSpacing: 0.5,
   },
   roleTag: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 5,
     backgroundColor: '#B91C1C',
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: RADIUS.sm,
-    gap: 6,
   },
   roleTagText: {
     color: '#FFF',
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: '800',
+    letterSpacing: 0.5,
+  },
+  logoutBtn: {
+    padding: 6,
   },
   body: {
     flex: 1,
+    flexDirection: 'column',
   },
   bodyWide: {
     flexDirection: 'row',
   },
   sidebar: {
-    width: 240,
+    width: 250,
     borderRightWidth: 1,
-    paddingVertical: 16,
+    paddingVertical: 12,
   },
   sidebarMobile: {
     width: '100%',
+    height: 56,
     borderRightWidth: 0,
     borderBottomWidth: 1,
-    paddingVertical: 8,
+    borderBottomColor: 'rgba(150,150,150,0.15)',
+    paddingVertical: 4,
   },
   navList: {
-    gap: 4,
     paddingHorizontal: 10,
+    gap: 4,
   },
   navListMobile: {
     flexDirection: 'row',
-    gap: 8,
-    paddingHorizontal: 12,
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    gap: 6,
   },
   navItem: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
+    paddingHorizontal: 12,
     paddingVertical: 10,
-    paddingHorizontal: 14,
     borderRadius: RADIUS.md,
-    borderLeftWidth: 3,
-    borderLeftColor: 'transparent',
+    position: 'relative',
   },
-  navText: {
+  navItemText: {
     fontSize: 13,
   },
-  content: {
+  navBadge: {
+    marginLeft: 'auto',
+    borderRadius: RADIUS.full,
+    minWidth: 18,
+    height: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 5,
+  },
+  navBadgeText: {
+    fontSize: 10,
+    fontWeight: '800',
+  },
+  mainContent: {
     flex: 1,
+  },
+  mainContentContainer: {
+    padding: 24,
+    paddingBottom: 60,
   },
 });

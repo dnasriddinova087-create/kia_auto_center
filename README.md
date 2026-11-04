@@ -86,11 +86,37 @@ EXPO_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
 
 ---
 
-## 👥 Demo Kirish Profillari (Bir klikda sinab ko‘rish)
+## 👥 Demo Kirish Profillari va Xodimlar Rollari (RBAC)
 
-- **Super Admin (Loyiha egasi):** `admin@kia-autocenter.uz` (Ism: Nasriddinova Dilfuza)
-- **Sotuvchi Konsultant:** `sales@kia-autocenter.uz` (Ism: Alisher Shodiyev)
-- **Mijoz:** `customer@kia-autocenter.uz` (Ism: Dilshod Ergashev)
+Platformada rolga asoslangan boshqaruv tizimi (Role-Based Access Control) to‘liq joriy qilingan:
+
+- **Super Admin (Loyiha egasi):** `admin@kia-autocenter.uz` (Ism: **Nasriddinova Dilfuza**) — Barcha modullarga 100% cheklovsiz vakolat
+- **Admin (Operatsion boshqaruvchi):** `manager@kia-autocenter.uz` (Ism: **Farrux Qodirov**) — Avtomobillar, arizalar, filiallar
+- **Sotuv Menejeri (Sales Manager):** `sales@kia-autocenter.uz` (Ism: **Alisher Shodiyev**) — Shartnomalar, bitimlar va CRM
+- **Servis Menejeri (Service Manager):** `service@kia-autocenter.uz` (Ism: **Bobur Rustamov**) — Ustaxonalar va TO buyurtmalari
+- **Mijozlar Konsultanti (Consultant):** `consultant@kia-autocenter.uz` (Ism: **Kamola Karimova**) — Konsultatsiyalar va so‘rovlar
+- **Auditor / Tahlilchi (Report Viewer):** `reports@kia-autocenter.uz` (Ism: **Ulug‘bek Salimov**) — Faqat statistik hisobotlar
+- **Mijoz (Customer):** `customer@kia-autocenter.uz` (Ism: **Dilshod Ergashev**) — Shaxsiy kabinet va arizalar
+
+---
+
+## 🎛 Administrator Portali Bo‘limlari (`/admin`)
+
+1. **Xavfsiz Kirish Portali (`/admin/login`):** Parol ko‘rsatish/yashirish, eslab qolish, parolni tiklash va server-side rol tekshiruvi.
+2. **Dashboard (`/admin/dashboard`):** 10 ta asosiy KPI ko‘rsatkichi, oylik dinamika grafigi, ommabop modellar nisbati, yangi arizalar.
+3. **Avtomobillar Floti (`/admin/vehicles`):** 11 ta modelning to‘liq CRUD boshqaruvi, narx, chegirma, ot kuchi, transmissiya, zaxira va statuslar.
+4. **Mijozlar Bazasi (`/admin/customers`):** Xaridlar tarixi, hisobni bloklash / faollashtirish, qidiruv va tahrirlash.
+5. **CRM Tizimi (`/admin/crm`):** Avto xaridi, test-drayv, kredit, trade-in va servis arizalari, statuslar tarixi, mas’ul menejer.
+6. **Sotuvlar Bo‘limi (`/admin/sales`):** Yangi shartnoma rasmiylashtirish, to‘lov turlari, tushum hisob-kitobi va **CSV eksport**.
+7. **Test-Drayv Boshqaruvi (`/admin/test-drives`):** Sana/vaqt ziddiyatlarini oldini olish, instruktor biriktirish, tasdiqlash va yakunlash.
+8. **Servis Markazi (`/admin/service`):** TO-1, TO-2, diagnostika, usta biriktirish, narx belgilash va buyurtma statuslari.
+9. **Xodimlar va Vakolatlar (`/admin/employees`):** Super Admin, Admin, Sales Manager, Service Manager, Consultant, Report Viewer boshqaruvi.
+10. **Ombor va Zaxira (`/admin/inventory`):** Rang va model bo‘yicha qoldiqlar, kirim-chiqim loglari, zaxira harakati.
+11. **Moliya va Kredit Takliflari (`/admin/finance`):** Hamkor banklar, imtiyozli foiz stavkalari, muddatli to‘lov (0% rassrochka).
+12. **Filiallar (`/admin/branches`) va Kontent (`/admin/content`):** Dilerlik manzillari, xarita, reklama bannerlari va mijozlar fikrlari moderatsiyasi.
+13. **Hisobotlar va Tahlil (`/admin/reports`):** Sotuvlar, tushum, menejerlar samaradorligi va **CSV formatida yuklab olish**.
+14. **Bildirishnomalar Markazi (`/admin/notifications`):** Yangi arizalar va ombor o‘zgarishlari bo‘yicha real-time bildirishnomalar.
+15. **Tizim Sozlamalari (`/admin/settings`):** Dilerlik ma’lumotlari, valyuta kursi va kafolat muddatlari.
 
 ---
 

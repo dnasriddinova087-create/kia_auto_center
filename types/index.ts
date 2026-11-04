@@ -11,9 +11,10 @@ export type ThemeMode = 'dark' | 'light';
 export type UserRole =
   | 'super_admin'
   | 'admin'
-  | 'manager'
-  | 'sales_consultant'
+  | 'sales_manager'
+  | 'consultant'
   | 'service_manager'
+  | 'report_viewer'
   | 'customer';
 
 export interface UserProfile {
@@ -32,13 +33,21 @@ export interface UserProfile {
 export type LeadStatus =
   | 'new'
   | 'contacted'
+  | 'in_negotiation'
   | 'test_drive_scheduled'
-  | 'negotiation'
+  | 'confirmed'
   | 'contract_signed'
-  | 'delivered'
+  | 'completed'
   | 'cancelled';
 
-export type LeadType = 'purchase' | 'loan' | 'trade_in' | 'test_drive' | 'general_inquiry';
+export type LeadType =
+  | 'purchase'
+  | 'loan'
+  | 'trade_in'
+  | 'test_drive'
+  | 'service'
+  | 'consultation'
+  | 'callback';
 
 export interface Lead {
   id: string;
@@ -52,6 +61,7 @@ export interface Lead {
   leadType: LeadType;
   status: LeadStatus;
   budgetUzs?: number;
+  assignedManager?: string;
   notes?: string;
   createdAt: string;
 }
@@ -70,6 +80,7 @@ export interface TestDriveRequest {
   branchName: string;
   preferredDate: string;
   preferredTime: string;
+  assignedStaff?: string;
   status: RequestStatus;
   notes?: string;
   createdAt: string;
@@ -82,13 +93,15 @@ export interface ServiceRequest {
   phone: string;
   vehicleModel: string;
   licensePlate?: string;
+  vin?: string;
   mileageKm?: number;
   serviceType: string;
+  technicianName?: string;
   branchId: string;
   branchName: string;
   preferredDate: string;
   preferredTime: string;
-  status: RequestStatus;
+  status: 'new' | 'accepted' | 'in_progress' | 'waiting_parts' | 'ready' | 'delivered' | 'cancelled';
   estimatedCostUzs?: number;
   notes?: string;
   createdAt: string;
@@ -123,18 +136,100 @@ export interface SiteSettings {
   defaultLoanMinDownPaymentPct: number; // e.g. 20
   currency: string;
   usdToUzsRate: number;
+  warrantyYears: number;
+  warrantyKm: number;
 }
 
 export interface DashboardStats {
   totalVehicles: number;
   availableVehicles: number;
   soldVehicles: number;
+  reservedVehicles: number;
   totalCustomers: number;
   newLeadsCount: number;
   testDrivesCount: number;
   servicesCount: number;
   monthlySalesCount: number;
   monthlyRevenueUzs: number;
+  totalRevenueUzs: number;
+}
+
+export interface SaleTransaction {
+  id: string;
+  contractNumber: string;
+  customerName: string;
+  customerPhone: string;
+  customerEmail?: string;
+  vehicleId: string;
+  vehicleName: string;
+  basePriceUzs: number;
+  discountUzs: number;
+  finalPriceUzs: number;
+  paymentMethod: 'cash' | 'bank_transfer' | 'auto_loan' | 'installment';
+  salesManager: string;
+  status: 'completed' | 'pending_payment' | 'contract_signed' | 'cancelled';
+  saleDate: string;
+  notes?: string;
+}
+
+export interface CustomerRecord {
+  id: string;
+  fullName: string;
+  phone: string;
+  email: string;
+  registeredAt: string;
+  totalPurchases: number;
+  totalSpentUzs: number;
+  totalRequests: number;
+  status: 'active' | 'blocked';
+  notes?: string;
+}
+
+export interface AdminNotification {
+  id: string;
+  title: string;
+  message: string;
+  type: 'lead' | 'test_drive' | 'service' | 'stock' | 'sale' | 'system';
+  isRead: boolean;
+  createdAt: string;
+  link?: string;
+}
+
+export interface InventoryMovement {
+  id: string;
+  vehicleId: string;
+  vehicleName: string;
+  color: string;
+  type: 'arrival' | 'sale' | 'reservation' | 'adjustment';
+  quantity: number;
+  previousStock: number;
+  newStock: number;
+  performedBy: string;
+  createdAt: string;
+}
+
+export interface FinanceOffer {
+  id: string;
+  bankName: string;
+  title: string;
+  interestRatePct: number;
+  minDownPaymentPct: number;
+  maxTermMonths: number;
+  specialDiscountUzs?: number;
+  description: string;
+  isActive: boolean;
+  expiryDate: string;
+}
+
+export interface AdminEmployee {
+  id: string;
+  fullName: string;
+  email: string;
+  phone: string;
+  role: UserRole;
+  department: string;
+  isActive: boolean;
+  createdAt: string;
 }
 
 export type { Vehicle, VehicleSpec, VehicleTrim, Branch, Offer };

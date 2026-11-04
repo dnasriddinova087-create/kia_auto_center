@@ -1,4 +1,4 @@
-// Registration Screen for KIA AUTO CENTER
+// Customer Registration Screen for KIA AUTO CENTER
 // Owner: Nasriddinova Dilfuza
 
 import React, { useState } from 'react';
@@ -10,13 +10,13 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { User, Mail, Phone, Lock, ArrowLeft } from 'lucide-react-native';
-import { CustomInput } from '../../components/CustomInput';
-import { CustomButton } from '../../components/CustomButton';
-import { useTheme } from '../../context/ThemeContext';
-import { useLanguage } from '../../context/LanguageContext';
-import { useAuth } from '../../context/AuthContext';
-import { COLORS, RADIUS } from '../../constants/theme';
+import { User, Mail, Phone, Lock, ArrowLeft, Eye, EyeOff } from 'lucide-react-native';
+import { CustomInput } from '../components/CustomInput';
+import { CustomButton } from '../components/CustomButton';
+import { useTheme } from '../context/ThemeContext';
+import { useLanguage } from '../context/LanguageContext';
+import { useAuth } from '../context/AuthContext';
+import { COLORS, RADIUS } from '../constants/theme';
 
 export default function RegisterScreen() {
   const router = useRouter();
@@ -28,6 +28,7 @@ export default function RegisterScreen() {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('+998 ');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -43,9 +44,9 @@ export default function RegisterScreen() {
     setLoading(false);
 
     if (res.success) {
-      router.replace('/(tabs)/profile');
+      router.replace('/profile');
     } else {
-      setError(res.error || 'Ro‘yxatdan o‘tishda xatolik');
+      setError(res.error || 'Ro‘yxatdan o‘tishda xatolik yuz berdi');
     }
   };
 
@@ -99,7 +100,7 @@ export default function RegisterScreen() {
 
           <CustomInput
             label="Elektron pochta"
-            placeholder="name@example.uz"
+            placeholder="mijoz@example.uz"
             keyboardType="email-address"
             autoCapitalize="none"
             value={email}
@@ -107,14 +108,26 @@ export default function RegisterScreen() {
             icon={<Mail size={18} color={colors.textMuted} />}
           />
 
-          <CustomInput
-            label="Parol yarating"
-            placeholder="Kamida 6 belgi"
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-            icon={<Lock size={18} color={colors.textMuted} />}
-          />
+          <View style={{ position: 'relative' }}>
+            <CustomInput
+              label="Parol yarating"
+              placeholder="Kamida 6 ta belgi"
+              secureTextEntry={!showPassword}
+              value={password}
+              onChangeText={setPassword}
+              icon={<Lock size={18} color={colors.textMuted} />}
+            />
+            <TouchableOpacity
+              onPress={() => setShowPassword(!showPassword)}
+              style={styles.eyeBtn}
+            >
+              {showPassword ? (
+                <EyeOff size={18} color={colors.textSecondary} />
+              ) : (
+                <Eye size={18} color={colors.textSecondary} />
+              )}
+            </TouchableOpacity>
+          </View>
 
           <CustomButton
             title={t('navRegister')}
@@ -122,15 +135,15 @@ export default function RegisterScreen() {
             loading={loading}
             variant="primary"
             size="lg"
-            style={{ marginTop: 8 }}
+            style={{ marginTop: 12 }}
           />
 
-          <View style={styles.loginRow}>
-            <Text style={{ color: colors.textSecondary, fontSize: 13 }}>
-              Hisobingiz bormi?
+          <View style={styles.footerRow}>
+            <Text style={[styles.footerText, { color: colors.textSecondary }]}>
+              Allaqachon hisobingiz bormi?
             </Text>
-            <TouchableOpacity onPress={() => router.push('/(auth)/login' as any)}>
-              <Text style={styles.loginLink}>{t('navLogin')}</Text>
+            <TouchableOpacity onPress={() => router.push('/login')}>
+              <Text style={styles.linkText}> {t('navLogin')}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -144,10 +157,10 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    padding: 16,
   },
   boxWrapper: {
-    maxWidth: 480,
+    maxWidth: 440,
     width: '100%',
   },
   backBtn: {
@@ -155,45 +168,45 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 6,
     marginBottom: 16,
+    alignSelf: 'flex-start',
   },
   backText: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '600',
   },
   card: {
     borderRadius: RADIUS.xl,
     borderWidth: 1,
     padding: 32,
+    width: '100%',
   },
   logoRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    marginBottom: 16,
+    marginBottom: 20,
   },
   logoBadge: {
-    backgroundColor: '#000',
-    borderWidth: 1.5,
-    borderColor: COLORS.kiaRed,
+    backgroundColor: COLORS.kiaRed,
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: RADIUS.sm,
   },
   logoKia: {
     color: '#FFF',
-    fontWeight: '900',
     fontSize: 14,
+    fontWeight: '900',
     letterSpacing: 2,
   },
   brandText: {
     fontSize: 14,
     fontWeight: '900',
-    letterSpacing: 1,
+    letterSpacing: 1.5,
   },
   title: {
-    fontSize: 26,
-    fontWeight: '800',
-    marginBottom: 4,
+    fontSize: 24,
+    fontWeight: '900',
+    marginBottom: 6,
   },
   subtitle: {
     fontSize: 14,
@@ -202,19 +215,27 @@ const styles = StyleSheet.create({
   errorText: {
     color: COLORS.danger,
     fontSize: 13,
-    marginBottom: 12,
+    marginBottom: 14,
     fontWeight: '600',
   },
-  loginRow: {
+  eyeBtn: {
+    position: 'absolute',
+    right: 14,
+    top: 38,
+    padding: 4,
+  },
+  footerRow: {
     flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center',
-    gap: 6,
     marginTop: 20,
+    alignItems: 'center',
   },
-  loginLink: {
-    color: COLORS.kiaRed,
-    fontWeight: '700',
+  footerText: {
     fontSize: 13,
+  },
+  linkText: {
+    color: COLORS.kiaRed,
+    fontSize: 13,
+    fontWeight: '700',
   },
 });

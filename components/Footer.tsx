@@ -79,10 +79,10 @@ export const Footer: React.FC = () => {
           {/* Column 3: Quick Navigation */}
           <View style={styles.column}>
             <Text style={styles.colHeader}>Navigatsiya</Text>
-            <TouchableOpacity onPress={() => router.push('/(tabs)/catalog' as any)} style={styles.link}>
+            <TouchableOpacity onPress={() => router.push('/catalog' as any)} style={styles.link}>
               <Text style={styles.linkText}>KIA Modellar Katalogi</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => router.push('/(tabs)/calculator' as any)} style={styles.link}>
+            <TouchableOpacity onPress={() => router.push('/calculator' as any)} style={styles.link}>
               <Text style={styles.linkText}>Kredit Kalkulyatori</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => router.push('/test-drive' as any)} style={styles.link}>
@@ -102,6 +102,11 @@ export const Footer: React.FC = () => {
             </TouchableOpacity>
             <TouchableOpacity onPress={() => router.push('/contact' as any)} style={styles.link}>
               <Text style={styles.linkText}>Bog‘lanish</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push('/admin/dashboard' as any)} style={styles.link}>
+              <Text style={[styles.linkText, { color: COLORS.kiaRed, fontWeight: '700' }]}>
+                KIA Admin Boshqaruv Portali
+              </Text>
             </TouchableOpacity>
           </View>
 

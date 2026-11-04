@@ -1,0 +1,36 @@
+{
+  "expo": {
+    "name": "KIA AUTO CENTER",
+    "slug": "kia-auto-center",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "kiaautocenter",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": false,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#111111"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.kia.autocenter.uz"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#111111"
+      },
+      "package": "com.kia.autocenter.uz"
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "single",
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router"
+    ]
+  }
+}

@@ -5,20 +5,21 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { UserProfile, UserRole } from '../types';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import { mockStore } from '../lib/mockStore';
 
 interface AuthContextType {
   user: UserProfile | null;
   isLoading: boolean;
   isAdmin: boolean;
   isStaff: boolean;
-  login: (email: string, pass: string) => Promise<{ success: boolean; error?: string }>;
+  login: (emailOrPhone: string, pass: string) => Promise<{ success: boolean; error?: string }>;
   loginAsDemo: (role: UserRole) => Promise<void>;
-  register: (fullName: string, email: string, phone: string, pass: string) => Promise<{ success: boolean; error?: string }>;
+  register: (fullName: string, phone: string, pass: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
   updateProfile: (data: Partial<UserProfile>) => Promise<void>;
 }
 
-const STORAGE_KEY = 'kia_auth_profile_v2';
+const STORAGE_KEY = 'kia_auth_profile_v3';
 
 export const DEMO_USERS: Record<string, UserProfile> = {
   super_admin: {
@@ -81,16 +82,6 @@ export const DEMO_USERS: Record<string, UserProfile> = {
     city: 'Tashkent',
     createdAt: new Date().toISOString(),
   },
-  customer: {
-    id: 'usr-customer-dilshod',
-    fullName: 'Dilshod Ergashev',
-    email: 'customer@kia-autocenter.uz',
-    phone: '+998 99 987 65 43',
-    role: 'customer',
-    preferredLanguage: 'uz',
-    city: 'Tashkent',
-    createdAt: new Date().toISOString(),
-  },
 };
 
 const AuthContext = createContext<AuthContextType>({
@@ -126,12 +117,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const login = async (email: string, pass: string): Promise<{ success: boolean; error?: string }> => {
+  const login = async (
+    emailOrPhone: string,
+    pass: string
+  ): Promise<{ success: boolean; error?: string }> => {
     setIsLoading(true);
     try {
-      if (isSupabaseConfigured) {
+      const cleanInput = emailOrPhone.trim().toLowerCase();
+
+      if (isSupabaseConfigured && cleanInput.includes('@')) {
         const { data, error } = await supabase.auth.signInWithPassword({
-          email,
+          email: cleanInput,
           password: pass,
         });
         if (error) {
@@ -142,8 +138,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (data.user) {
           const profile: UserProfile = {
             id: data.user.id,
-            email: data.user.email || email,
-            fullName: data.user.user_metadata?.full_name || email.split('@')[0],
+            email: data.user.email || cleanInput,
+            fullName: data.user.user_metadata?.full_name || cleanInput.split('@')[0],
             phone: data.user.user_metadata?.phone || '+998 90 000 00 00',
             role: data.user.user_metadata?.role || 'customer',
             preferredLanguage: 'uz',
@@ -156,34 +152,51 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       }
 
-      // Check predefined accounts (e.g. Dilfuza, Alisher, etc.)
-      const normalizedEmail = email.trim().toLowerCase();
+      // Check predefined staff accounts (Dilfuza, Alisher, etc.)
       const foundDemo = Object.values(DEMO_USERS).find(
-        (u) => u.email.toLowerCase() === normalizedEmail
+        (u) =>
+          u.email.toLowerCase() === cleanInput ||
+          u.phone.replace(/\D/g, '') === cleanInput.replace(/\D/g, '')
+      );
+
+      // Check registered customer list in mockStore
+      const registeredCustomers = await mockStore.getCustomers();
+      const foundRegistered = registeredCustomers.find(
+        (c) =>
+          (c.phone && c.phone.replace(/\D/g, '') === cleanInput.replace(/\D/g, '')) ||
+          (c.email && c.email.toLowerCase() === cleanInput)
       );
 
       let role: UserRole = 'customer';
-      if (normalizedEmail.includes('admin') || normalizedEmail.includes('dilfuza')) {
+      if (cleanInput.includes('admin') || cleanInput.includes('dilfuza')) {
         role = 'super_admin';
-      } else if (normalizedEmail.includes('sales')) {
+      } else if (cleanInput.includes('sales')) {
         role = 'sales_manager';
-      } else if (normalizedEmail.includes('service')) {
+      } else if (cleanInput.includes('service')) {
         role = 'service_manager';
-      } else if (normalizedEmail.includes('manager')) {
+      } else if (cleanInput.includes('manager')) {
         role = 'admin';
       } else if (foundDemo) {
         role = foundDemo.role;
       }
 
-      const profile: UserProfile = foundDemo || {
+      const profile: UserProfile = foundDemo || (foundRegistered ? {
+        id: foundRegistered.id,
+        fullName: foundRegistered.fullName,
+        email: foundRegistered.email || `${cleanInput}@kia-client.uz`,
+        phone: foundRegistered.phone,
+        role: 'customer',
+        preferredLanguage: 'uz',
+        createdAt: foundRegistered.registeredAt,
+      } : {
         id: `usr-${Date.now()}`,
-        email: normalizedEmail,
-        fullName: email.split('@')[0].toUpperCase(),
-        phone: '+998 90 123 45 67',
+        email: cleanInput.includes('@') ? cleanInput : `${cleanInput.replace(/\D/g, '')}@kia-client.uz`,
+        fullName: cleanInput.replace(/\D/g, '').length > 5 ? `Mijoz (${cleanInput})` : cleanInput.toUpperCase(),
+        phone: cleanInput.includes('+998') ? cleanInput : `+998 ${cleanInput}`,
         role,
         preferredLanguage: 'uz',
         createdAt: new Date().toISOString(),
-      };
+      });
 
       setUser(profile);
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
@@ -197,7 +210,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const loginAsDemo = async (role: UserRole) => {
     setIsLoading(true);
-    const demo = DEMO_USERS[role] || DEMO_USERS.customer;
+    const demo = DEMO_USERS[role] || DEMO_USERS.super_admin;
     setUser(demo);
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(demo));
     setIsLoading(false);
@@ -205,39 +218,55 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const register = async (
     fullName: string,
-    email: string,
     phone: string,
     pass: string
   ): Promise<{ success: boolean; error?: string }> => {
     setIsLoading(true);
     try {
+      const cleanPhoneDigits = phone.replace(/\D/g, '');
+      const generatedEmail = `${cleanPhoneDigits || Date.now()}@kia-client.uz`;
+
       if (isSupabaseConfigured) {
-        const { data, error } = await supabase.auth.signUp({
-          email,
-          password: pass,
-          options: {
-            data: {
-              full_name: fullName,
-              phone,
-              role: 'customer',
+        try {
+          await supabase.auth.signUp({
+            email: generatedEmail,
+            password: pass,
+            options: {
+              data: {
+                full_name: fullName,
+                phone,
+                role: 'customer',
+              },
             },
-          },
-        });
-        if (error) {
-          setIsLoading(false);
-          return { success: false, error: error.message };
+          });
+        } catch {
+          // continue with local store
         }
       }
 
       const newProfile: UserProfile = {
-        id: `usr-${Date.now()}`,
+        id: `cust-${Date.now()}`,
         fullName,
-        email: email.trim().toLowerCase(),
+        email: generatedEmail,
         phone,
         role: 'customer',
         preferredLanguage: 'uz',
         createdAt: new Date().toISOString(),
       };
+
+      // Instantly register customer in mockStore so Admin Panel sees it live
+      await mockStore.addCustomer({
+        id: newProfile.id,
+        fullName,
+        phone,
+        email: generatedEmail,
+        registeredAt: newProfile.createdAt,
+        totalPurchases: 0,
+        totalSpentUzs: 0,
+        totalRequests: 0,
+        status: 'active',
+        notes: "Sayt orqali ro'yxatdan o'tgan yangi mijoz",
+      });
 
       setUser(newProfile);
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(newProfile));
@@ -250,11 +279,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = async () => {
-    if (isSupabaseConfigured) {
-      await supabase.auth.signOut().catch(() => {});
+    try {
+      if (isSupabaseConfigured) {
+        await supabase.auth.signOut();
+      }
+      await AsyncStorage.removeItem(STORAGE_KEY);
+      setUser(null);
+    } catch {
+      setUser(null);
     }
-    await AsyncStorage.removeItem(STORAGE_KEY);
-    setUser(null);
   };
 
   const updateProfile = async (data: Partial<UserProfile>) => {

@@ -1,6 +1,8 @@
 // KIA AUTO CENTER — Special Promotions & Campaigns
 // Owner: Nasriddinova Dilfuza
 
+import { KIA_LOCAL_IMAGES } from './vehicleImages';
+
 export interface Offer {
   id: string;
   badge: {
@@ -23,7 +25,7 @@ export interface Offer {
     ru: string[];
     en: string[];
   };
-  image: string;
+  image: any;
   validUntil: string;
 }
 
@@ -65,15 +67,15 @@ export const KIA_OFFERS: Offer[] = [
         'Valid at all official dealership centers'
       ]
     },
-    image: 'https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=1200&q=80',
+    image: KIA_LOCAL_IMAGES['kia-k5'],
     validUntil: '2026-12-31'
   },
   {
     id: 'offer-trade-in-bonus',
     badge: {
-      uz: '+15 000 000 SO‘M BONUS',
-      ru: '+15 000 000 СУМ БОНУС',
-      en: '+15,000,000 UZS BONUS'
+      uz: '+50 000 000 SO‘M BONUS',
+      ru: '+50 000 000 СУМ БОНУС',
+      en: '+50,000,000 UZS BONUS'
     },
     title: {
       uz: 'Eski avtomobilingizni yangi KIA Sportage’ga almashtiring',
@@ -81,9 +83,9 @@ export const KIA_OFFERS: Offer[] = [
       en: 'Trade-in your current car for a brand new KIA Sportage'
     },
     description: {
-      uz: 'Trade-In dasturi orqali avtomobilingizni bozor bahosida baholab, qo‘shimcha 15 000 000 so‘m chegirma oling.',
-      ru: 'Сдайте свой текущий автомобиль по рыночной стоимости и получите прямую выгоду 15 000 000 сум.',
-      en: 'Trade in your vehicle at market value and get an instant 15,000,000 UZS factory discount.'
+      uz: 'Trade-In dasturi orqali avtomobilingizni bozor bahosida baholatib, 50 000 000 so‘mgacha qo‘shimcha zavod bonusi oling.',
+      ru: 'Сдайте свой текущий автомобиль по рыночной стоимости и получите прямую выгоду до 50 000 000 сум.',
+      en: 'Trade in your vehicle at market value and get an instant bonus up to 50,000,000 UZS.'
     },
     details: {
       uz: [
@@ -102,25 +104,25 @@ export const KIA_OFFERS: Offer[] = [
         'Same-day paperwork completion'
       ]
     },
-    image: 'https://images.unsplash.com/photo-1609521263047-f8f205293f24?auto=format&fit=crop&w=1200&q=80',
+    image: KIA_LOCAL_IMAGES['kia-sportage'],
     validUntil: '2026-12-31'
   },
   {
     id: 'offer-warranty',
     badge: {
-      uz: '5 YIL KAFOLAT',
-      ru: '5 ЛЕТ ГАРАНТИИ',
-      en: '5 YEARS WARRANTY'
+      uz: '5 YIL KAFOLAT + 3 YIL TO',
+      ru: '5 ЛЕТ ГАРАНТИИ + 3 ГОДА ТО',
+      en: '5 YEARS WARRANTY + 3 YRS MAINTENANCE'
     },
     title: {
-      uz: 'Rasmiy 5 yil yoki 150 000 km kafolat',
-      ru: 'Официальная гарантия 5 лет или 150 000 км',
-      en: 'Official 5-Year or 150,000 km Warranty'
+      uz: 'Rasmiy 5 yil yoki 150 000 km kafolat va bepul servis',
+      ru: 'Официальная гарантия 5 лет или 150 000 км и ТО',
+      en: 'Official 5-Year / 150,000 km Warranty & Service'
     },
     description: {
-      uz: 'Barcha yangi KIA avtomobillariga zavod tomonidan 5 yil yoki 150 000 km rasmiy kafolat taqdim etiladi.',
-      ru: 'На все новые автомобили KIA предоставляется надежная гарантия качества от завода-производителя.',
-      en: 'All new KIA vehicles come with peace of mind backed by factory 5-year coverage.'
+      uz: 'Barcha yangi KIA avtomobillariga zavod tomonidan 5 yil yoki 150 000 km kafolat hamda 3 yillik bepul texnik ko‘rik beriladi.',
+      ru: 'На все новые автомобили KIA предоставляется надежная гарантия качества и 3 года сервиса.',
+      en: 'All new KIA vehicles come with peace of mind backed by factory 5-year coverage and complimentary service.'
     },
     details: {
       uz: [
@@ -139,7 +141,7 @@ export const KIA_OFFERS: Offer[] = [
         'Master-certified KIA technicians'
       ]
     },
-    image: 'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&w=1200&q=80',
+    image: KIA_LOCAL_IMAGES['kia-sorento'],
     validUntil: '2026-12-31'
   }
 ];

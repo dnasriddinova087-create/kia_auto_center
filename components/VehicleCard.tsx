@@ -13,6 +13,7 @@ import {
 import { Heart, Gauge, Fuel, Cog, ArrowRight, Calendar } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { Vehicle } from '../constants/vehicles';
+import { getVehicleImage } from '../constants/vehicleImages';
 import { useTheme } from '../context/ThemeContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useFavorites } from '../context/FavoritesContext';
@@ -50,7 +51,7 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle }) => {
       {/* Top Image Container */}
       <View style={styles.imageContainer}>
         <Image
-          source={{ uri: vehicle.mainImage }}
+          source={getVehicleImage(vehicle)}
           style={styles.image}
           resizeMode="cover"
         />

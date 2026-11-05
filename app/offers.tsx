@@ -56,7 +56,11 @@ export default function OffersScreen() {
                 isWide && styles.offerCardWide,
               ]}
             >
-              <Image source={{ uri: offer.image }} style={[styles.offerImage, isWide && styles.offerImageWide]} />
+              <Image
+                source={typeof offer.image === 'string' ? { uri: offer.image } : offer.image}
+                style={[styles.offerImage, isWide && styles.offerImageWide]}
+                resizeMode="cover"
+              />
 
               <View style={styles.cardBody}>
                 <View style={styles.badge}>

@@ -23,6 +23,8 @@ import {
   Eye,
   EyeOff,
   PackageCheck,
+  UploadCloud,
+  ImagePlus,
 } from 'lucide-react-native';
 import { CustomInput } from '../../components/CustomInput';
 import { CustomButton } from '../../components/CustomButton';
@@ -31,6 +33,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { mockStore } from '../../lib/mockStore';
 import { Vehicle } from '../../constants/vehicles';
+import { getVehicleImage } from '../../constants/vehicleImages';
 import { COLORS, RADIUS } from '../../constants/theme';
 
 export default function AdminVehiclesScreen() {
@@ -58,6 +61,34 @@ export default function AdminVehiclesScreen() {
   const [colorName, setColorName] = useState('Snow White Pearl');
   const [stockCount, setStockCount] = useState('5');
   const [status, setStatus] = useState<'available' | 'reserved' | 'sold' | 'hidden'>('available');
+  const [showUrlInput, setShowUrlInput] = useState(false);
+
+  const handleFileChange = (e: any) => {
+    const file = e.target?.files?.[0];
+    if (file) {
+      if (file.size > 12 * 1024 * 1024) {
+        alert('Fayl hajmi 12MB dan oshmasligi lozim');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (event.target?.result) {
+          setImageUrl(event.target.result as string);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const triggerFileInput = () => {
+    if (typeof document !== 'undefined') {
+      const input = document.getElementById('vehicle-image-file-input') as HTMLInputElement;
+      if (input) {
+        input.value = '';
+        input.click();
+      }
+    }
+  };
 
   useEffect(() => {
     loadVehicles();
@@ -277,7 +308,7 @@ export default function AdminVehiclesScreen() {
               { backgroundColor: colors.card, borderColor: colors.border },
             ]}
           >
-            <Image source={{ uri: v.mainImage }} style={styles.cardImage} resizeMode="cover" />
+            <Image source={getVehicleImage(v)} style={styles.cardImage} resizeMode="cover" />
 
             <View style={styles.cardBody}>
               <View style={styles.rowBetween}>
@@ -360,7 +391,90 @@ export default function AdminVehiclesScreen() {
               <CustomInput label="Komplektatsiya" placeholder="GT Line+" value={trimName} onChangeText={setTrimName} />
               <CustomInput label="Narxi (UZS)" placeholder="468000000" value={basePrice} onChangeText={setBasePrice} keyboardType="numeric" />
               <CustomInput label="Chegirma (UZS)" placeholder="15000000" value={discountUzs} onChangeText={setDiscountUzs} keyboardType="numeric" />
-              <CustomInput label="Rasm Havolasi (URL)" placeholder="https://..." value={imageUrl} onChangeText={setImageUrl} />
+              {/* Real File Upload Section */}
+              <View style={styles.uploadSection}>
+                <Text style={[styles.fieldLabel, { color: colors.text }]}>Avtomobil Rasmini Yuklash:</Text>
+                {imageUrl ? (
+                  <View style={[styles.imagePreviewWrap, { borderColor: colors.border, backgroundColor: isDark ? '#1F1F1F' : '#F9FAFB' }]}>
+                    <Image
+                      source={
+                        imageUrl.startsWith('data:') || imageUrl.startsWith('http')
+                          ? { uri: imageUrl }
+                          : getVehicleImage({ id: editingVehicle?.id, name, mainImage: imageUrl })
+                      }
+                      style={styles.previewImage}
+                      resizeMode="cover"
+                    />
+                    <View style={styles.previewActions}>
+                      <TouchableOpacity
+                        onPress={triggerFileInput}
+                        style={[styles.uploadBtnSmall, { backgroundColor: COLORS.kiaRed }]}
+                      >
+                        <UploadCloud size={14} color="#FFFFFF" />
+                        <Text style={styles.uploadBtnText}>Boshqa Rasm Tanlash</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() => setImageUrl('')}
+                        style={styles.deleteImageBtn}
+                      >
+                        <Trash2 size={14} color="#EF4444" />
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                ) : (
+                  <TouchableOpacity
+                    onPress={triggerFileInput}
+                    style={[
+                      styles.dropZone,
+                      {
+                        borderColor: COLORS.kiaRed,
+                        backgroundColor: isDark ? '#181818' : '#F9FAFB',
+                      },
+                    ]}
+                  >
+                    <UploadCloud size={32} color={COLORS.kiaRed} style={{ marginBottom: 6 }} />
+                    <Text style={[styles.dropZoneTitle, { color: colors.text }]}>
+                      Qurilmadan rasm yuklash (Kompyuter / Telefon)
+                    </Text>
+                    <Text style={[styles.dropZoneSub, { color: colors.textSecondary }]}>
+                      Faylni tanlash uchun bu yerni bosing (JPG, PNG, WEBP)
+                    </Text>
+                    <View style={[styles.chooseFilePill, { backgroundColor: COLORS.kiaRed }]}>
+                      <Text style={styles.chooseFileText}>Faylni Tanlang</Text>
+                    </View>
+                  </TouchableOpacity>
+                )}
+
+                {/* Hidden input for web file picker */}
+                {typeof document !== 'undefined' && (
+                  <input
+                    id="vehicle-image-file-input"
+                    type="file"
+                    accept="image/*"
+                    style={{ display: 'none' }}
+                    onChange={handleFileChange}
+                  />
+                )}
+
+                <TouchableOpacity
+                  onPress={() => setShowUrlInput(!showUrlInput)}
+                  style={{ marginTop: 8, alignSelf: 'flex-start' }}
+                >
+                  <Text style={{ fontSize: 11, color: colors.textSecondary, textDecorationLine: 'underline' }}>
+                    {showUrlInput ? 'URL orqali kiritishni yashirish' : 'Yoki internetdagi havola (URL) orqali kiritish'}
+                  </Text>
+                </TouchableOpacity>
+
+                {showUrlInput && (
+                  <CustomInput
+                    label="Rasm Havolasi (URL)"
+                    placeholder="https://..."
+                    value={imageUrl}
+                    onChangeText={setImageUrl}
+                    style={{ marginTop: 6 }}
+                  />
+                )}
+              </View>
 
               <View style={styles.modalRow}>
                 <View style={{ flex: 1 }}>
@@ -592,5 +706,72 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     gap: 10,
     marginTop: 10,
+  },
+  uploadSection: {
+    marginBottom: 16,
+  },
+  dropZone: {
+    borderWidth: 1.5,
+    borderStyle: 'dashed',
+    borderRadius: RADIUS.lg,
+    padding: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  dropZoneTitle: {
+    fontSize: 13,
+    fontWeight: '700',
+    textAlign: 'center',
+    marginBottom: 4,
+  },
+  dropZoneSub: {
+    fontSize: 11,
+    textAlign: 'center',
+    marginBottom: 12,
+  },
+  chooseFilePill: {
+    paddingHorizontal: 16,
+    paddingVertical: 7,
+    borderRadius: RADIUS.md,
+  },
+  chooseFileText: {
+    color: '#FFFFFF',
+    fontWeight: '800',
+    fontSize: 12,
+  },
+  imagePreviewWrap: {
+    borderRadius: RADIUS.lg,
+    borderWidth: 1,
+    overflow: 'hidden',
+    padding: 8,
+  },
+  previewImage: {
+    width: '100%',
+    height: 150,
+    borderRadius: RADIUS.md,
+    marginBottom: 10,
+  },
+  previewActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 8,
+  },
+  uploadBtnSmall: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: RADIUS.sm,
+  },
+  uploadBtnText: {
+    color: '#FFFFFF',
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  deleteImageBtn: {
+    padding: 7,
+    borderRadius: RADIUS.sm,
   },
 });

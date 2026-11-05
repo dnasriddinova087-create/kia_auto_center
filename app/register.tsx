@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { User, Mail, Phone, Lock, ArrowLeft, Eye, EyeOff } from 'lucide-react-native';
+import { User, Phone, Lock, ArrowLeft, Eye, EyeOff, CheckCircle2, Sparkles, ArrowRight } from 'lucide-react-native';
 import { CustomInput } from '../components/CustomInput';
 import { CustomButton } from '../components/CustomButton';
 import { useTheme } from '../context/ThemeContext';
@@ -25,26 +25,36 @@ export default function RegisterScreen() {
   const { register } = useAuth();
 
   const [fullName, setFullName] = useState('');
-  const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('+998 ');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const handleRegister = async () => {
-    if (!fullName.trim() || !email.trim() || !password.trim()) {
-      setError('Iltimos, barcha maydonlarni to‘ldiring');
+    if (!fullName.trim() || !phone.trim() || !password.trim()) {
+      setError('Iltimos, ism, telefon raqami va parolni to‘ldiring');
       return;
     }
+
+    if (password.trim().length < 6) {
+      setError('Xavfsizlik paroli kamida 6 ta belgidan iborat bo‘lishi lozim');
+      return;
+    }
+
     setError('');
     setLoading(true);
 
-    const res = await register(fullName, email, phone, password);
+    const res = await register(fullName, phone, password);
     setLoading(false);
 
     if (res.success) {
-      router.replace('/profile');
+      setIsSuccess(true);
+      // Auto-redirect to cabinet after 2.5 seconds
+      setTimeout(() => {
+        router.replace('/profile');
+      }, 2500);
     } else {
       setError(res.error || 'Ro‘yxatdan o‘tishda xatolik yuz berdi');
     }
@@ -67,6 +77,7 @@ export default function RegisterScreen() {
             { backgroundColor: colors.card, borderColor: colors.border },
           ]}
         >
+          {/* Logo */}
           <View style={styles.logoRow}>
             <View style={styles.logoBadge}>
               <Text style={styles.logoKia}>KIA</Text>
@@ -74,78 +85,107 @@ export default function RegisterScreen() {
             <Text style={[styles.brandText, { color: colors.text }]}>AUTO CENTER</Text>
           </View>
 
-          <Text style={[styles.title, { color: colors.text }]}>{t('navRegister')}</Text>
-          <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
-            Rasmiy dilerlik platformasiga a’zo bo‘ling
-          </Text>
+          {isSuccess ? (
+            /* Thank you & Success View */
+            <View style={styles.successContainer}>
+              <View style={styles.successIconBadge}>
+                <CheckCircle2 size={44} color="#FFFFFF" />
+              </View>
 
-          {error ? <Text style={styles.errorText}>{error}</Text> : null}
+              <Text style={[styles.successTitle, { color: colors.text }]}>
+                Rahmat, {fullName}!
+              </Text>
 
-          <CustomInput
-            label={t('formFullName')}
-            placeholder="Alisher Navoiy"
-            value={fullName}
-            onChangeText={setFullName}
-            icon={<User size={18} color={colors.textMuted} />}
-          />
+              <View style={styles.vipBadge}>
+                <Sparkles size={14} color={COLORS.kiaRed} />
+                <Text style={styles.vipBadgeText}>RASMIY MIJOZ MAQOMI FAOL</Text>
+              </View>
 
-          <CustomInput
-            label={t('formPhone')}
-            placeholder="+998 90 123 45 67"
-            keyboardType="phone-pad"
-            value={phone}
-            onChangeText={setPhone}
-            icon={<Phone size={18} color={colors.textMuted} />}
-          />
+              <Text style={[styles.successDesc, { color: colors.textSecondary }]}>
+                KIA AUTO CENTER oilasiga xush kelibsiz! Siz muvaffaqiyatli ro‘yxatdan o‘tdingiz.
+                Barcha imtiyozlar, test-drayv buyurtmalari va maxsus narxlar siz uchun faollashtirildi.
+              </Text>
 
-          <CustomInput
-            label="Elektron pochta"
-            placeholder="mijoz@example.uz"
-            keyboardType="email-address"
-            autoCapitalize="none"
-            value={email}
-            onChangeText={setEmail}
-            icon={<Mail size={18} color={colors.textMuted} />}
-          />
+              <Text style={[styles.redirectNotice, { color: colors.textMuted }]}>
+                Shaxsiy kabinetingizga yo‘naltirilmoqda...
+              </Text>
 
-          <View style={{ position: 'relative' }}>
-            <CustomInput
-              label="Parol yarating"
-              placeholder="Kamida 6 ta belgi"
-              secureTextEntry={!showPassword}
-              value={password}
-              onChangeText={setPassword}
-              icon={<Lock size={18} color={colors.textMuted} />}
-            />
-            <TouchableOpacity
-              onPress={() => setShowPassword(!showPassword)}
-              style={styles.eyeBtn}
-            >
-              {showPassword ? (
-                <EyeOff size={18} color={colors.textSecondary} />
-              ) : (
-                <Eye size={18} color={colors.textSecondary} />
-              )}
-            </TouchableOpacity>
-          </View>
+              <CustomButton
+                title="Shaxsiy Kabinetga O‘tish"
+                onPress={() => router.replace('/profile')}
+                variant="primary"
+                size="lg"
+                style={{ width: '100%', marginTop: 12 }}
+                iconRight={<ArrowRight size={18} color="#FFFFFF" />}
+              />
+            </View>
+          ) : (
+            /* Registration Form */
+            <>
+              <Text style={[styles.title, { color: colors.text }]}>Ro‘yxatdan O‘tish</Text>
+              <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
+                Faqat ism va telefon raqamingiz orqali rasmiy dilerlik platformasiga a’zo bo‘ling
+              </Text>
 
-          <CustomButton
-            title={t('navRegister')}
-            onPress={handleRegister}
-            loading={loading}
-            variant="primary"
-            size="lg"
-            style={{ marginTop: 12 }}
-          />
+              {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
-          <View style={styles.footerRow}>
-            <Text style={[styles.footerText, { color: colors.textSecondary }]}>
-              Allaqachon hisobingiz bormi?
-            </Text>
-            <TouchableOpacity onPress={() => router.push('/login')}>
-              <Text style={styles.linkText}> {t('navLogin')}</Text>
-            </TouchableOpacity>
-          </View>
+              <CustomInput
+                label="Ism va Familiyangiz"
+                placeholder="Alisher Shodiyev"
+                value={fullName}
+                onChangeText={setFullName}
+                icon={<User size={18} color={colors.textMuted} />}
+              />
+
+              <CustomInput
+                label="Telefon Raqamingiz"
+                placeholder="+998 90 123 45 67"
+                keyboardType="phone-pad"
+                value={phone}
+                onChangeText={setPhone}
+                icon={<Phone size={18} color={colors.textMuted} />}
+              />
+
+              <View style={{ position: 'relative' }}>
+                <CustomInput
+                  label="Parol Yarating"
+                  placeholder="Kamida 6 ta belgi"
+                  secureTextEntry={!showPassword}
+                  value={password}
+                  onChangeText={setPassword}
+                  icon={<Lock size={18} color={colors.textMuted} />}
+                />
+                <TouchableOpacity
+                  onPress={() => setShowPassword(!showPassword)}
+                  style={styles.eyeBtn}
+                >
+                  {showPassword ? (
+                    <EyeOff size={18} color={colors.textSecondary} />
+                  ) : (
+                    <Eye size={18} color={colors.textSecondary} />
+                  )}
+                </TouchableOpacity>
+              </View>
+
+              <CustomButton
+                title="Ro‘yxatdan O‘tish"
+                onPress={handleRegister}
+                loading={loading}
+                variant="primary"
+                size="lg"
+                style={{ marginTop: 14 }}
+              />
+
+              <View style={styles.footerRow}>
+                <Text style={[styles.footerText, { color: colors.textSecondary }]}>
+                  Allaqachon hisobingiz bormi?
+                </Text>
+                <TouchableOpacity onPress={() => router.push('/login')}>
+                  <Text style={styles.linkText}> Kirish</Text>
+                </TouchableOpacity>
+              </View>
+            </>
+          )}
         </View>
       </View>
     </ScrollView>
@@ -158,6 +198,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 16,
+    paddingVertical: 36,
   },
   boxWrapper: {
     maxWidth: 440,
@@ -178,24 +219,24 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.xl,
     borderWidth: 1,
     padding: 32,
-    width: '100%',
   },
   logoRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    marginBottom: 20,
+    justifyContent: 'center',
+    gap: 10,
+    marginBottom: 24,
   },
   logoBadge: {
     backgroundColor: COLORS.kiaRed,
-    paddingHorizontal: 8,
+    paddingHorizontal: 10,
     paddingVertical: 3,
     borderRadius: RADIUS.sm,
   },
   logoKia: {
-    color: '#FFF',
-    fontSize: 14,
+    color: '#FFFFFF',
     fontWeight: '900',
+    fontSize: 16,
     letterSpacing: 2,
   },
   brandText: {
@@ -206,37 +247,93 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: '900',
+    textAlign: 'center',
     marginBottom: 6,
   },
   subtitle: {
-    fontSize: 14,
+    fontSize: 13,
+    textAlign: 'center',
+    lineHeight: 19,
     marginBottom: 20,
   },
   errorText: {
     color: COLORS.danger,
     fontSize: 13,
-    marginBottom: 14,
-    fontWeight: '600',
+    textAlign: 'center',
+    marginBottom: 16,
+    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+    padding: 10,
+    borderRadius: RADIUS.md,
   },
   eyeBtn: {
     position: 'absolute',
     right: 14,
-    top: 38,
-    padding: 4,
+    bottom: 24,
   },
   footerRow: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: 20,
     alignItems: 'center',
+    marginTop: 20,
   },
   footerText: {
     fontSize: 13,
   },
   linkText: {
     color: COLORS.kiaRed,
-    fontSize: 13,
     fontWeight: '700',
+    fontSize: 13,
+  },
+  successContainer: {
+    alignItems: 'center',
+    paddingVertical: 10,
+  },
+  successIconBadge: {
+    width: 72,
+    height: 72,
+    borderRadius: RADIUS.full,
+    backgroundColor: '#10B981',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 18,
+    shadowColor: '#10B981',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.35,
+    shadowRadius: 10,
+    elevation: 8,
+  },
+  successTitle: {
+    fontSize: 22,
+    fontWeight: '900',
+    textAlign: 'center',
+    marginBottom: 6,
+  },
+  vipBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: 'rgba(200, 16, 46, 0.1)',
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    borderRadius: RADIUS.full,
+    marginBottom: 14,
+  },
+  vipBadgeText: {
+    color: COLORS.kiaRed,
+    fontSize: 11,
+    fontWeight: '800',
+    letterSpacing: 0.8,
+  },
+  successDesc: {
+    fontSize: 13,
+    textAlign: 'center',
+    lineHeight: 20,
+    maxWidth: 340,
+    marginBottom: 14,
+  },
+  redirectNotice: {
+    fontSize: 11,
+    fontStyle: 'italic',
+    marginBottom: 16,
   },
 });
-

@@ -31,6 +31,7 @@ import { VehicleCard } from '../components/VehicleCard';
 import { LoanCalculatorWidget } from '../components/LoanCalculatorWidget';
 import { CustomButton } from '../components/CustomButton';
 import { LeadModal } from '../components/LeadModal';
+import { HeroSlider } from '../components/HeroSlider';
 import { useTheme } from '../context/ThemeContext';
 import { useLanguage } from '../context/LanguageContext';
 import { KIA_VEHICLES } from '../constants/vehicles';
@@ -45,6 +46,8 @@ export default function HomeScreen() {
   const { t, language } = useLanguage();
   const [testDriveModalOpen, setTestDriveModalOpen] = useState(false);
 
+  const [selectedCarName, setSelectedCarName] = useState<string>('KIA K5');
+
   const isWide = width >= 900;
   const isDesktop = width >= 1200;
 
@@ -58,53 +61,13 @@ export default function HomeScreen() {
       >
         <Navbar />
 
-        {/* Hero Section */}
-        <View style={styles.heroWrapper}>
-          <Image
-            source={{
-              uri: 'https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=1920&q=85',
-            }}
-            style={styles.heroBackground}
-            resizeMode="cover"
-          />
-          <View style={styles.heroOverlay} />
-
-          <View style={styles.heroContent}>
-            <View style={styles.heroBadge}>
-              <Sparkles size={14} color={COLORS.kiaRed} />
-              <Text style={styles.heroBadgeText}>O‘ZBEKISTONDAGI RASMIY DILER</Text>
-            </View>
-
-            <Text style={styles.heroTitle}>{t('heroTitle')}</Text>
-            <Text style={styles.heroSubtitle}>{t('heroSubtitle')}</Text>
-
-            <View style={styles.heroActions}>
-              <CustomButton
-                title={t('heroBtnExplore')}
-                onPress={() => router.push('/catalog')}
-                variant="primary"
-                size="lg"
-                iconRight={<ArrowRight size={18} color="#FFFFFF" />}
-              />
-              <CustomButton
-                title={t('heroBtnTestDrive')}
-                onPress={() => setTestDriveModalOpen(true)}
-                variant="outline"
-                size="lg"
-                textStyle={{ color: '#FFFFFF' }}
-                style={{ borderColor: '#FFFFFF' }}
-                icon={<Calendar size={18} color="#FFFFFF" />}
-              />
-            </View>
-
-            {/* Owner Tribute Banner */}
-            <View style={styles.ownerNotice}>
-              <Text style={styles.ownerNoticeText}>
-                Loyiha egasi: <Text style={{ color: '#FFFFFF', fontWeight: '700' }}>Nasriddinova Dilfuza</Text> | Toshkent, Samarqand, Buxoro
-              </Text>
-            </View>
-          </View>
-        </View>
+        {/* 10 KIA Models Animated Hero Slider */}
+        <HeroSlider
+          onOpenTestDrive={(car) => {
+            if (car) setSelectedCarName(car);
+            setTestDriveModalOpen(true);
+          }}
+        />
 
         {/* KPI Stats Bar */}
         <View style={[styles.statsBar, { backgroundColor: isDark ? '#141414' : '#F8F9FA' }]}>
@@ -217,7 +180,11 @@ export default function HomeScreen() {
                     isWide && { width: '31.5%' },
                   ]}
                 >
-                  <Image source={{ uri: offer.image }} style={styles.offerImage} />
+                  <Image
+                    source={typeof offer.image === 'string' ? { uri: offer.image } : offer.image}
+                    style={styles.offerImage}
+                    resizeMode="cover"
+                  />
                   <View style={styles.offerBadge}>
                     <Text style={styles.offerBadgeText}>{offer.badge[language]}</Text>
                   </View>
@@ -375,6 +342,7 @@ export default function HomeScreen() {
           visible={testDriveModalOpen}
           onClose={() => setTestDriveModalOpen(false)}
           leadType="test_drive"
+          vehicleName={selectedCarName}
         />
       </ScrollView>
       <MobileBottomNav />

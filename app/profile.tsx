@@ -91,12 +91,14 @@ export default function ProfileScreen() {
                         </View>
                       )}
                     </View>
-                    <View style={styles.detailRow}>
-                      <Mail size={14} color={colors.textSecondary} />
-                      <Text style={[styles.detailText, { color: colors.textSecondary }]}>
-                        {user.email}
-                      </Text>
-                    </View>
+                    {!user.email?.includes('@kia-client.uz') && (
+                      <View style={styles.detailRow}>
+                        <Mail size={14} color={colors.textSecondary} />
+                        <Text style={[styles.detailText, { color: colors.textSecondary }]}>
+                          {user.email}
+                        </Text>
+                      </View>
+                    )}
                     <View style={styles.detailRow}>
                       <Phone size={14} color={colors.textSecondary} />
                       <Text style={[styles.detailText, { color: colors.textSecondary }]}>
@@ -265,16 +267,6 @@ export default function ProfileScreen() {
                   >
                     <User size={14} color="#FFFFFF" />
                     <Text style={styles.demoBtnText}>Sotuv Menejeri (Alisher)</Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    onPress={() => loginAsDemo('customer')}
-                    style={[styles.demoBtn, { backgroundColor: isDark ? '#333' : '#E5E7EB' }]}
-                  >
-                    <User size={14} color={isDark ? '#FFF' : '#111'} />
-                    <Text style={[styles.demoBtnText, { color: isDark ? '#FFF' : '#111' }]}>
-                      Mijoz (Dilshod)
-                    </Text>
                   </TouchableOpacity>
                 </View>
               </View>

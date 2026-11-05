@@ -149,8 +149,8 @@ export const KIA_VEHICLES: Vehicle[] = [
     modelCode: 'k5',
     year: 2026,
     bodyType: 'sedan',
-    basePriceUzs: 385000000,
-    specialPriceUzs: 375000000,
+    basePriceUzs: 369900000,
+    specialPriceUzs: 359900000,
     status: 'available',
     isFeatured: true,
     isSpecialOffer: true,
@@ -193,7 +193,7 @@ export const KIA_VEHICLES: Vehicle[] = [
       {
         id: 'k5-comfort',
         name: 'Comfort',
-        priceUzs: 385000000,
+        priceUzs: 369900000,
         inStock: true,
         features: {
           uz: ['LED faralar', 'Dual zona iqlim', '8 dyuymli ekran', 'Smart Key'],
@@ -204,7 +204,7 @@ export const KIA_VEHICLES: Vehicle[] = [
       {
         id: 'k5-prestige',
         name: 'Prestige',
-        priceUzs: 425000000,
+        priceUzs: 415000000,
         inStock: true,
         features: {
           uz: ['10.25 dyuymli ekran', 'Bose premium audio (12 dinamik)', 'Ventilatsiyali o‘rindiqlar', 'Simsiz zaryadlash'],
@@ -215,7 +215,7 @@ export const KIA_VEHICLES: Vehicle[] = [
       {
         id: 'k5-gtline',
         name: 'GT Line+',
-        priceUzs: 468000000,
+        priceUzs: 458000000,
         inStock: true,
         features: {
           uz: ['Panoramali lyuk', '360 gradus kameralar', 'Proektsion displey HUD', 'Drive Wise to‘liq to‘plami'],
@@ -231,7 +231,7 @@ export const KIA_VEHICLES: Vehicle[] = [
     modelCode: 'k8',
     year: 2026,
     bodyType: 'sedan',
-    basePriceUzs: 720000000,
+    basePriceUzs: 689900000,
     status: 'available',
     isFeatured: true,
     isSpecialOffer: false,
@@ -273,7 +273,7 @@ export const KIA_VEHICLES: Vehicle[] = [
       {
         id: 'k8-prestige',
         name: 'Prestige',
-        priceUzs: 720000000,
+        priceUzs: 689900000,
         inStock: true,
         features: {
           uz: ['Egilgan panoramik ekran 12.3"+12.3"', 'Meridian Audio (14 dinamik)', 'Ergo Motion massajli o‘rindiq'],
@@ -284,7 +284,7 @@ export const KIA_VEHICLES: Vehicle[] = [
       {
         id: 'k8-signature',
         name: 'Signature VIP',
-        priceUzs: 795000000,
+        priceUzs: 765000000,
         inStock: true,
         features: {
           uz: ['Nappa charmi', 'Elektron adaptiv osma (ECS)', 'Orqa yo‘lovchilar uchun boshqaruv paneli', 'Avtomatik parkovka'],
@@ -357,8 +357,8 @@ export const KIA_VEHICLES: Vehicle[] = [
     modelCode: 'sonet',
     year: 2026,
     bodyType: 'crossover',
-    basePriceUzs: 205000000,
-    specialPriceUzs: 199000000,
+    basePriceUzs: 189900000,
+    specialPriceUzs: 185000000,
     status: 'available',
     isFeatured: true,
     isSpecialOffer: true,
@@ -400,7 +400,7 @@ export const KIA_VEHICLES: Vehicle[] = [
       {
         id: 'sonet-classic',
         name: 'Classic',
-        priceUzs: 205000000,
+        priceUzs: 189900000,
         inStock: true,
         features: {
           uz: ['2 ta xavfsizlik yostig‘i', 'Konditsioner', 'ABS + ESC', 'Orqa parkovka sensorlari'],
@@ -438,7 +438,8 @@ export const KIA_VEHICLES: Vehicle[] = [
     modelCode: 'seltos',
     year: 2026,
     bodyType: 'crossover',
-    basePriceUzs: 320000000,
+    basePriceUzs: 339900000,
+    specialPriceUzs: 329000000,
     status: 'available',
     isFeatured: true,
     isSpecialOffer: false,
@@ -507,8 +508,8 @@ export const KIA_VEHICLES: Vehicle[] = [
     modelCode: 'sportage',
     year: 2026,
     bodyType: 'suv',
-    basePriceUzs: 415000000,
-    specialPriceUzs: 399000000,
+    basePriceUzs: 419900000,
+    specialPriceUzs: 409900000,
     status: 'available',
     isFeatured: true,
     isSpecialOffer: true,
@@ -550,7 +551,7 @@ export const KIA_VEHICLES: Vehicle[] = [
       {
         id: 'sportage-luxe',
         name: 'Luxe 2.0',
-        priceUzs: 415000000,
+        priceUzs: 419900000,
         inStock: true,
         features: {
           uz: ['LED faralar', 'Dual iqlim', 'Orqa kamera', 'Old/orqa isitgichlar'],
@@ -588,7 +589,7 @@ export const KIA_VEHICLES: Vehicle[] = [
     modelCode: 'sorento',
     year: 2026,
     bodyType: 'suv',
-    basePriceUzs: 595000000,
+    basePriceUzs: 569900000,
     status: 'available',
     isFeatured: true,
     isSpecialOffer: false,
@@ -630,7 +631,7 @@ export const KIA_VEHICLES: Vehicle[] = [
       {
         id: 'sorento-prestige',
         name: 'Prestige 7-seats AWD',
-        priceUzs: 595000000,
+        priceUzs: 569900000,
         inStock: true,
         features: {
           uz: ['7 o‘rinli salon', 'Bose akustika', 'Ventilatsiyali o‘rindiqlar', 'Ko‘r zonalar monitori'],
@@ -641,7 +642,7 @@ export const KIA_VEHICLES: Vehicle[] = [
       {
         id: 'sorento-premium',
         name: 'Premium+ AWD',
-        priceUzs: 660000000,
+        priceUzs: 645000000,
         inStock: true,
         features: {
           uz: ['Nappa charmi', 'Proektsion displey', 'Panoramali lyuk', 'Raqamli kalit va masofaviy parkovka'],
@@ -714,8 +715,8 @@ export const KIA_VEHICLES: Vehicle[] = [
     modelCode: 'carnival',
     year: 2026,
     bodyType: 'minivan',
-    basePriceUzs: 740000000,
-    specialPriceUzs: 715000000,
+    basePriceUzs: 650000000,
+    specialPriceUzs: 635000000,
     status: 'available',
     isFeatured: true,
     isSpecialOffer: true,
@@ -757,7 +758,7 @@ export const KIA_VEHICLES: Vehicle[] = [
       {
         id: 'carnival-prestige',
         name: 'Prestige 8-seats',
-        priceUzs: 740000000,
+        priceUzs: 650000000,
         inStock: true,
         features: {
           uz: ['8 o‘rinli salon', 'Elektr eshiklar va yukxona', 'Smart Cruise Control', 'Bose 12 dinamik'],
@@ -768,7 +769,7 @@ export const KIA_VEHICLES: Vehicle[] = [
       {
         id: 'carnival-limousine',
         name: 'Hi-Limousine 7-seats VIP',
-        priceUzs: 870000000,
+        priceUzs: 790000000,
         inStock: true,
         features: {
           uz: ['Premium VIP Relaxation o‘rindiqlar', '21.5 dyuymli tom monitori', 'Nappa teri', 'Ikkita elektr lyuk'],
@@ -779,12 +780,81 @@ export const KIA_VEHICLES: Vehicle[] = [
     ]
   },
   {
+    id: 'kia-ev6',
+    name: 'KIA EV6',
+    modelCode: 'ev6',
+    year: 2026,
+    bodyType: 'crossover',
+    basePriceUzs: 699000000,
+    specialPriceUzs: 679000000,
+    status: 'available',
+    isFeatured: true,
+    isSpecialOffer: true,
+    warrantyYears: 7,
+    warrantyKm: 150000,
+    mainImage: 'https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&w=1200&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&w=1200&q=80'
+    ],
+    tagline: {
+      uz: '100% Elektr Krossover — 528 km masofa bir quvvatda',
+      ru: '100% Электрический кроссовер — 528 км на одном заряде',
+      en: '100% Electric Crossover — 528 km range on a single charge'
+    },
+    description: {
+      uz: 'KIA EV6 — innovatsion E-GMP platformasida yaratilgan to‘liq elektr flagman. 800V o‘ta tezkor quvvatlash (18 daqiqada 80%), AWD ikki motorli qudrat va futuristik salon.',
+      ru: 'KIA EV6 построен на революционной платформе E-GMP: сверхбыстрая зарядка 800V за 18 минут и динамика спорткара.',
+      en: 'The all-electric KIA EV6 delivers exhilarating performance, 800V ultra-fast charging, and zero-emission innovation.'
+    },
+    specs: {
+      engineCapacity: 0.0,
+      powerHp: 325,
+      torqueNm: 605,
+      fuelType: 'electric',
+      transmission: '1 AT (Reducer)',
+      driveType: 'AWD',
+      acceleration0100: 5.2,
+      topSpeedKmh: 188,
+      fuelConsumptionCombined: 16.5,
+      lengthMm: 4680,
+      widthMm: 1880,
+      heightMm: 1550,
+      wheelbaseMm: 2900,
+      groundClearanceMm: 160,
+      trunkCapacityLiters: 520
+    },
+    trims: [
+      {
+        id: 'ev6-earth',
+        name: 'Earth AWD 77.4 kWh',
+        priceUzs: 699000000,
+        inStock: true,
+        features: {
+          uz: ['77.4 kVt/soat batareya', '800V ultra tezkor zaryad', 'Meridian Premium audio', 'V2L quvvat berish funksiyasi'],
+          ru: ['Батарея 77.4 кВт·ч', 'Ультрабыстрая зарядка 800V', 'Премиум-звук Meridian', 'Функция V2L (Vehicle-to-Load)'],
+          en: ['77.4 kWh battery', '800V ultra-fast charging', 'Meridian Premium sound', 'V2L bi-directional charging']
+        }
+      },
+      {
+        id: 'ev6-gtline',
+        name: 'GT-Line AWD Dual Motor',
+        priceUzs: 770000000,
+        inStock: true,
+        features: {
+          uz: ['325 ot kuchi AWD', 'Sportiv GT-Line paket', 'AR proektsion displey', 'Drive Wise 2.0 avtonom assistent'],
+          ru: ['325 л.с. AWD', 'Спортивный пакет GT-Line', 'AR проекционный дисплей', 'Drive Wise 2.0 ADAS'],
+          en: ['325 hp AWD', 'Sporty GT-Line styling', 'AR Head-Up Display', 'Drive Wise 2.0 ADAS']
+        }
+      }
+    ]
+  },
+  {
     id: 'kia-bongo',
     name: 'KIA Bongo III',
     modelCode: 'bongo',
     year: 2026,
     bodyType: 'commercial',
-    basePriceUzs: 220000000,
+    basePriceUzs: 215000000,
     status: 'available',
     isFeatured: false,
     isSpecialOffer: false,
@@ -825,7 +895,7 @@ export const KIA_VEHICLES: Vehicle[] = [
       {
         id: 'bongo-standard',
         name: 'Standard Cab 4x2',
-        priceUzs: 220000000,
+        priceUzs: 215000000,
         inStock: true,
         features: {
           uz: ['1 tonna yuk ko‘tarish', 'Gidravlik rul', 'Konditsioner', 'Elektr oynalar'],
@@ -836,7 +906,7 @@ export const KIA_VEHICLES: Vehicle[] = [
       {
         id: 'bongo-double-cab',
         name: 'Double Cab 4x4',
-        priceUzs: 255000000,
+        priceUzs: 250000000,
         inStock: true,
         features: {
           uz: ['6 kishilik salon', '4x4 to‘liq uzatma', 'Kuchaytirilgan ressorlar', 'Old tumanga qarshi chiroqlar'],

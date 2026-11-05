@@ -86,13 +86,12 @@ export default function LoginScreen() {
           {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
           <CustomInput
-            label="Elektron pochta"
-            placeholder="customer@kia-autocenter.uz"
-            keyboardType="email-address"
+            label="Telefon raqami yoki pochta"
+            placeholder="+998 90 123 45 67 yoki admin@..."
             autoCapitalize="none"
             value={email}
             onChangeText={setEmail}
-            icon={<Mail size={18} color={colors.textMuted} />}
+            icon={<Phone size={18} color={colors.textMuted} />}
           />
 
           <View style={{ position: 'relative' }}>
@@ -131,27 +130,6 @@ export default function LoginScreen() {
             </Text>
             <TouchableOpacity onPress={() => router.push('/register')}>
               <Text style={styles.linkText}> {t('navRegister')}</Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* Quick Demo Login */}
-          <View style={styles.dividerRow}>
-            <View style={[styles.divider, { backgroundColor: colors.border }]} />
-            <Text style={[styles.dividerText, { color: colors.textMuted }]}>
-              YOKI TEZKOR KIRISH
-            </Text>
-            <View style={[styles.divider, { backgroundColor: colors.border }]} />
-          </View>
-
-          <View style={styles.demoGroup}>
-            <TouchableOpacity
-              onPress={() => handleDemo('customer')}
-              style={[styles.demoBtn, { backgroundColor: isDark ? '#222' : '#F3F4F6' }]}
-            >
-              <User size={15} color={colors.text} />
-              <Text style={[styles.demoBtnLabel, { color: colors.text }]}>
-                Mijoz profili (Dilshod)
-              </Text>
             </TouchableOpacity>
           </View>
 

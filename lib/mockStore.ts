@@ -26,7 +26,7 @@ const STORAGE_KEYS = {
   TEST_DRIVES: 'kia_store_test_drives_v2',
   SERVICES: 'kia_store_services_v2',
   TRADE_INS: 'kia_store_trade_ins_v2',
-  CUSTOMERS: 'kia_store_customers_v2',
+  CUSTOMERS: 'kia_store_customers_v3',
   SALES: 'kia_store_sales_v2',
   EMPLOYEES: 'kia_store_employees_v2',
   INVENTORY: 'kia_store_inventory_v2',
@@ -241,56 +241,8 @@ const INITIAL_TRADE_INS: TradeInRequest[] = [
   },
 ];
 
-const INITIAL_CUSTOMERS: CustomerRecord[] = [
-  {
-    id: 'cust-1',
-    fullName: 'Dilshod Ergashev',
-    phone: '+998 99 987 65 43',
-    email: 'customer@kia-autocenter.uz',
-    registeredAt: '2026-01-15T10:00:00Z',
-    totalPurchases: 1,
-    totalSpentUzs: 468000000,
-    totalRequests: 4,
-    status: 'active',
-    notes: 'KIA K5 xaridori, doimiy mijoz',
-  },
-  {
-    id: 'cust-2',
-    fullName: 'Javohir Alimov',
-    phone: '+998 90 987 65 43',
-    email: 'javohir@example.uz',
-    registeredAt: '2026-02-10T14:30:00Z',
-    totalPurchases: 0,
-    totalSpentUzs: 0,
-    totalRequests: 2,
-    status: 'active',
-    notes: 'Kredit bo‘yicha arizachi',
-  },
-  {
-    id: 'cust-3',
-    fullName: 'Nilufar Rahimova',
-    phone: '+998 97 712 34 56',
-    email: 'nilufar@example.uz',
-    registeredAt: '2026-03-01T09:15:00Z',
-    totalPurchases: 1,
-    totalSpentUzs: 510000000,
-    totalRequests: 3,
-    status: 'active',
-    notes: 'Sportage X-Line buyurtmachi',
-  },
-  {
-    id: 'cust-4',
-    fullName: 'Bekzod Toshmatov',
-    phone: '+998 99 888 77 66',
-    email: 'bekzod@vip.uz',
-    registeredAt: '2026-03-14T11:00:00Z',
-    totalPurchases: 1,
-    totalSpentUzs: 795000000,
-    totalRequests: 2,
-    status: 'active',
-    notes: 'KIA K8 VIP mijoz',
-  },
-];
+// Real registered customers only (no fake samples)
+const INITIAL_CUSTOMERS: CustomerRecord[] = [];
 
 const INITIAL_SALES: SaleTransaction[] = [
   {

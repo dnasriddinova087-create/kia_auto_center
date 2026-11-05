@@ -34,6 +34,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { useFavorites } from '../../context/FavoritesContext';
 import { KIA_VEHICLES } from '../../constants/vehicles';
+import { getVehicleImage } from '../../constants/vehicleImages';
 import { COLORS, RADIUS } from '../../constants/theme';
 
 export default function VehicleDetailScreen() {
@@ -79,7 +80,11 @@ export default function VehicleDetailScreen() {
           {/* Gallery Column */}
           <View style={[styles.galleryCol, isWide && { width: '58%' }]}>
             <View style={styles.mainImageWrapper}>
-              <Image source={{ uri: activeImage }} style={styles.mainImage} resizeMode="cover" />
+              <Image
+                source={getVehicleImage({ id: vehicle.id, name: vehicle.name, mainImage: activeImage })}
+                style={styles.mainImage}
+                resizeMode="cover"
+              />
               {vehicle.isSpecialOffer && (
                 <View style={styles.badge}>
                   <Text style={styles.badgeText}>MAXSUS TAKLIF</Text>

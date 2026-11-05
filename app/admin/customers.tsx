@@ -173,7 +173,25 @@ export default function AdminCustomersScreen() {
 
       {/* Customer List */}
       <View style={styles.list}>
-        {filtered.map((c) => (
+        {filtered.length === 0 ? (
+          <View style={[styles.emptyCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <Users size={48} color={COLORS.kiaRed} style={{ marginBottom: 12 }} />
+            <Text style={[styles.emptyTitle, { color: colors.text }]}>
+              Hozircha saytdan ro‘yxatdan o‘tgan yangi mijozlar yo‘q
+            </Text>
+            <Text style={[styles.emptySub, { color: colors.textSecondary }]}>
+              Mijozlar platforma orqali ro‘yxatdan o‘tishi bilan ularning ma’lumotlari bu yerda real vaqtda avtomatik saqlanadi va paydo bo‘ladi.
+            </Text>
+            <TouchableOpacity
+              onPress={handleOpenAdd}
+              style={[styles.addFirstBtn, { backgroundColor: COLORS.kiaRed }]}
+            >
+              <Plus size={16} color="#FFFFFF" />
+              <Text style={styles.addFirstBtnText}>Yangi Mijoz Kiritish</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          filtered.map((c) => (
           <View
             key={c.id}
             style={[
@@ -271,7 +289,7 @@ export default function AdminCustomersScreen() {
               </TouchableOpacity>
             </View>
           </View>
-        ))}
+        )))}
       </View>
 
       {/* Modal */}
@@ -472,6 +490,40 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     gap: 10,
     marginTop: 16,
+  },
+  emptyCard: {
+    borderRadius: RADIUS.xl,
+    borderWidth: 1,
+    padding: 36,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 12,
+  },
+  emptyTitle: {
+    fontSize: 18,
+    fontWeight: '800',
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+  emptySub: {
+    fontSize: 13,
+    textAlign: 'center',
+    maxWidth: 520,
+    lineHeight: 20,
+    marginBottom: 20,
+  },
+  addFirstBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: RADIUS.md,
+  },
+  addFirstBtnText: {
+    color: '#FFFFFF',
+    fontWeight: '700',
+    fontSize: 13,
   },
 });
 

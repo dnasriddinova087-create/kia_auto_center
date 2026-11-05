@@ -12,6 +12,31 @@ import { LanguageProvider } from '../context/LanguageContext';
 import { AuthProvider } from '../context/AuthContext';
 import { FavoritesProvider } from '../context/FavoritesContext';
 
+// Google Translate and browser extension DOM reconciliation guard to prevent blank screen crashes
+if (typeof window !== 'undefined' && typeof Node === 'function' && Node.prototype) {
+  try {
+    const origRemoveChild = Node.prototype.removeChild;
+    Node.prototype.removeChild = function <T extends Node>(child: T): T {
+      if (child.parentNode !== this) {
+        return child;
+      }
+      return origRemoveChild.apply(this, arguments as any);
+    };
+    const origInsertBefore = Node.prototype.insertBefore;
+    Node.prototype.insertBefore = function <T extends Node>(newNode: T, referenceNode: Node | null): T {
+      if (referenceNode && referenceNode.parentNode !== this) {
+        return newNode;
+      }
+      return origInsertBefore.apply(this, arguments as any);
+    };
+    if (document && document.body) {
+      document.body.style.backgroundColor = '#111111';
+    }
+  } catch {
+    // ignore
+  }
+}
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {

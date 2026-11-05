@@ -10,7 +10,7 @@ export default function Root({ children }: PropsWithChildren) {
       <head>
         <meta charSet="utf-8" />
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no, viewport-fit=cover" />
         <meta name="google" content="notranslate" />
         <meta name="theme-color" content="#111111" />
         <meta httpEquiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
@@ -20,22 +20,28 @@ export default function Root({ children }: PropsWithChildren) {
         <ScrollViewStyleReset />
         <style dangerouslySetInnerHTML={{
           __html: `
+            *, *::before, *::after {
+              box-sizing: border-box;
+            }
             html, body {
+              width: 100%;
+              max-width: 100vw;
               height: 100%;
               background-color: #111111;
               color: #FFFFFF;
               font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            }
-            body {
-              overflow-x: hidden;
+              overflow-x: hidden !important;
               margin: 0;
               padding: 0;
             }
             #root {
               display: flex;
+              width: 100%;
+              max-width: 100vw;
               min-height: 100%;
               flex: 1;
               background-color: #111111;
+              overflow-x: hidden !important;
             }
             /* Prevent image drag and text selection quirks */
             * {

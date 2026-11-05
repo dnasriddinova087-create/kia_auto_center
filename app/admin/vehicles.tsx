@@ -10,6 +10,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Modal,
+  useWindowDimensions,
 } from 'react-native';
 import {
   Plus,
@@ -37,6 +38,10 @@ import { getVehicleImage } from '../../constants/vehicleImages';
 import { COLORS, RADIUS } from '../../constants/theme';
 
 export default function AdminVehiclesScreen() {
+  const { width } = useWindowDimensions();
+  const isMobile = width < 768;
+  const isTablet = width >= 768 && width < 1024;
+
   const { colors, isDark } = useTheme();
   const { formatCurrency } = useLanguage();
 
@@ -305,7 +310,11 @@ export default function AdminVehiclesScreen() {
             key={v.id}
             style={[
               styles.vehicleCard,
-              { backgroundColor: colors.card, borderColor: colors.border },
+              {
+                backgroundColor: colors.card,
+                borderColor: colors.border,
+                width: isMobile ? '100%' : isTablet ? '48%' : 320,
+              },
             ]}
           >
             <Image source={getVehicleImage(v)} style={styles.cardImage} resizeMode="cover" />
@@ -577,10 +586,10 @@ const styles = StyleSheet.create({
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 20,
+    gap: 16,
+    width: '100%',
   },
   vehicleCard: {
-    width: 320,
     borderRadius: RADIUS.xl,
     borderWidth: 1,
     overflow: 'hidden',

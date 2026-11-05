@@ -47,6 +47,12 @@ export const Navbar: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const isDesktop = width >= 1024;
+  const isMobile = width < 768;
+
+  const cycleLanguage = () => {
+    const nextLang = language === 'uz' ? 'ru' : language === 'ru' ? 'en' : 'uz';
+    setLanguage(nextLang);
+  };
 
   const navLinks = [
     { label: t('navCatalog'), href: '/catalog', icon: Car },
@@ -123,11 +129,11 @@ export const Navbar: React.FC = () => {
 
         {/* Right Tools (Language, Theme Mode Pill, Favorites, Auth, Mobile Toggle) */}
         <View style={styles.rightSection}>
-          {/* Prominent Theme Mode Toggle Pill */}
+          {/* Prominent Theme Mode Toggle */}
           <TouchableOpacity
             onPress={toggleTheme}
             style={[
-              styles.themePill,
+              isMobile ? styles.iconButton : styles.themePill,
               {
                 backgroundColor: isDark ? '#222222' : '#F3F4F6',
                 borderColor: isDark ? '#333333' : '#E5E7EB',
@@ -137,41 +143,52 @@ export const Navbar: React.FC = () => {
             {isDark ? (
               <>
                 <Sun size={15} color="#FBBF24" />
-                <Text style={[styles.themePillText, { color: '#F9FAFB' }]}>Kunduzgi</Text>
+                {!isMobile && <Text style={[styles.themePillText, { color: '#F9FAFB' }]}>Kunduzgi</Text>}
               </>
             ) : (
               <>
                 <Moon size={15} color="#111827" />
-                <Text style={[styles.themePillText, { color: '#111827' }]}>Tungi</Text>
+                {!isMobile && <Text style={[styles.themePillText, { color: '#111827' }]}>Tungi</Text>}
               </>
             )}
           </TouchableOpacity>
 
           {/* Language Selector */}
-          <View style={[styles.langSwitch, { backgroundColor: isDark ? '#222222' : '#F3F4F6' }]}>
-            {(['uz', 'ru', 'en'] as Language[]).map((lang) => (
-              <TouchableOpacity
-                key={lang}
-                onPress={() => setLanguage(lang)}
-                style={[
-                  styles.langBtn,
-                  language === lang && { backgroundColor: COLORS.kiaRed },
-                ]}
-              >
-                <Text
+          {isMobile ? (
+            <TouchableOpacity
+              onPress={cycleLanguage}
+              style={[styles.iconButton, { backgroundColor: isDark ? '#222222' : '#F3F4F6' }]}
+            >
+              <Text style={{ fontSize: 11, fontWeight: '800', color: colors.text }}>
+                {language.toUpperCase()}
+              </Text>
+            </TouchableOpacity>
+          ) : (
+            <View style={[styles.langSwitch, { backgroundColor: isDark ? '#222222' : '#F3F4F6' }]}>
+              {(['uz', 'ru', 'en'] as Language[]).map((lang) => (
+                <TouchableOpacity
+                  key={lang}
+                  onPress={() => setLanguage(lang)}
                   style={[
-                    styles.langText,
-                    {
-                      color: language === lang ? '#FFFFFF' : colors.textSecondary,
-                      fontWeight: language === lang ? '700' : '500',
-                    },
+                    styles.langBtn,
+                    language === lang && { backgroundColor: COLORS.kiaRed },
                   ]}
                 >
-                  {lang.toUpperCase()}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
+                  <Text
+                    style={[
+                      styles.langText,
+                      {
+                        color: language === lang ? '#FFFFFF' : colors.textSecondary,
+                        fontWeight: language === lang ? '700' : '500',
+                      },
+                    ]}
+                  >
+                    {lang.toUpperCase()}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
 
           {/* Favorites */}
           <TouchableOpacity
@@ -190,36 +207,40 @@ export const Navbar: React.FC = () => {
             )}
           </TouchableOpacity>
 
-          {/* Admin Fast Button (Always visible for easy testing and for staff) */}
-          <TouchableOpacity
-            onPress={() => handleNavigate(isStaff ? '/admin/dashboard' : '/admin/login')}
-            style={[styles.adminBtn, { backgroundColor: '#B91C1C' }]}
-          >
-            <ShieldCheck size={14} color="#FFFFFF" />
-            <Text style={styles.adminBtnText}>Admin</Text>
-          </TouchableOpacity>
+          {/* Admin Fast Button (Desktop/Tablet only) */}
+          {!isMobile && (
+            <TouchableOpacity
+              onPress={() => handleNavigate(isStaff ? '/admin/dashboard' : '/admin/login')}
+              style={[styles.adminBtn, { backgroundColor: '#B91C1C' }]}
+            >
+              <ShieldCheck size={14} color="#FFFFFF" />
+              <Text style={styles.adminBtnText}>Admin</Text>
+            </TouchableOpacity>
+          )}
 
-          {/* Customer Auth Button */}
-          {user ? (
-            <TouchableOpacity
-              onPress={() => handleNavigate('/profile')}
-              style={[styles.profileBtn, { backgroundColor: isDark ? '#222222' : '#F3F4F6' }]}
-            >
-              <User size={16} color={colors.text} />
-              {isDesktop && (
-                <Text style={[styles.profileText, { color: colors.text }]} numberOfLines={1}>
-                  {user.fullName.split(' ')[0]}
-                </Text>
-              )}
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity
-              onPress={() => handleNavigate('/login')}
-              style={[styles.loginBtn, { backgroundColor: COLORS.kiaRed }]}
-            >
-              <User size={14} color="#FFFFFF" />
-              {isDesktop && <Text style={styles.loginBtnText}>{t('navLogin')}</Text>}
-            </TouchableOpacity>
+          {/* Customer Auth Button (Desktop/Tablet only) */}
+          {!isMobile && (
+            user ? (
+              <TouchableOpacity
+                onPress={() => handleNavigate('/profile')}
+                style={[styles.profileBtn, { backgroundColor: isDark ? '#222222' : '#F3F4F6' }]}
+              >
+                <User size={16} color={colors.text} />
+                {isDesktop && (
+                  <Text style={[styles.profileText, { color: colors.text }]} numberOfLines={1}>
+                    {user.fullName.split(' ')[0]}
+                  </Text>
+                )}
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                onPress={() => handleNavigate('/login')}
+                style={[styles.loginBtn, { backgroundColor: COLORS.kiaRed }]}
+              >
+                <User size={14} color="#FFFFFF" />
+                {isDesktop && <Text style={styles.loginBtnText}>{t('navLogin')}</Text>}
+              </TouchableOpacity>
+            )
           )}
 
           {/* Mobile Menu Hamburger */}

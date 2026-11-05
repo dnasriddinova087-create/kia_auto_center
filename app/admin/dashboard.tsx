@@ -61,6 +61,7 @@ export default function AdminDashboardScreen() {
 
   const isWide = width >= 900;
   const isDesktop = width >= 1200;
+  const isMobile = width < 768;
 
   // Chart data: Monthly Sales Dynamics
   const monthlyDynamics = [
@@ -434,52 +435,58 @@ const styles = StyleSheet.create({
   badgeRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: 8,
     marginBottom: 8,
+    flexWrap: 'wrap',
   },
   badgeRed: {
     backgroundColor: COLORS.kiaRed,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
     borderRadius: RADIUS.sm,
   },
   badgeRedText: {
     color: '#FFF',
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: '900',
     letterSpacing: 1,
   },
   ownerTag: {
-    fontSize: 13,
+    fontSize: 12,
   },
   title: {
-    fontSize: 28,
+    fontSize: 22,
     fontWeight: '900',
     letterSpacing: -0.5,
   },
   subtitle: {
-    fontSize: 14,
+    fontSize: 13,
     marginTop: 4,
   },
   headerActions: {
     flexDirection: 'row',
-    gap: 12,
+    gap: 10,
+    flexWrap: 'wrap',
+    width: '100%',
   },
   kpiGrid: {
-    gap: 14,
-    marginBottom: 28,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+    marginBottom: 24,
+    width: '100%',
   },
   kpiGridWide: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+    gap: 14,
   },
   kpiCard: {
     flex: 1,
-    minWidth: 160,
-    maxWidth: 240,
+    minWidth: 140,
     borderRadius: RADIUS.lg,
     borderWidth: 1,
-    padding: 18,
+    padding: 14,
   },
   kpiIconWrap: {
     width: 40,

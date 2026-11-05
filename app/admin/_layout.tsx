@@ -57,12 +57,13 @@ export default function AdminLayout() {
   const unreadCount = notifications.filter((n) => !n.isRead).length;
 
   const isWide = width >= 992;
+  const isMobile = width < 768;
   const isLoginPage = pathname === '/admin/login';
 
   // If on login page, render clean page without sidebar
   if (isLoginPage) {
     return (
-      <View style={[styles.container, { backgroundColor: colors.bg }]}>
+      <View style={[styles.container, { backgroundColor: colors.bg, width: '100%', maxWidth: '100%' }]}>
         <Slot />
       </View>
     );
@@ -86,8 +87,13 @@ export default function AdminLayout() {
     { label: 'Tizim Sozlamalari', href: '/admin/settings', icon: Settings },
   ];
 
+  const cycleLanguage = () => {
+    const nextLang = language === 'uz' ? 'ru' : language === 'ru' ? 'en' : 'uz';
+    setLanguage(nextLang);
+  };
+
   return (
-    <View style={[styles.container, { backgroundColor: colors.bg }]}>
+    <View style={[styles.container, { backgroundColor: colors.bg, width: '100%', maxWidth: '100%', overflow: 'hidden' }]}>
       {/* Top Admin Header Bar */}
       <View
         style={[
@@ -95,15 +101,18 @@ export default function AdminLayout() {
           {
             backgroundColor: isDark ? '#141414' : '#FFFFFF',
             borderBottomColor: colors.border,
+            paddingHorizontal: isMobile ? 12 : 20,
           },
         ]}
       >
         <View style={styles.topBarLeft}>
           <TouchableOpacity onPress={() => router.push('/')} style={styles.exitBtn}>
             <ArrowLeft size={16} color={colors.textSecondary} />
-            <Text style={[styles.exitText, { color: colors.textSecondary }]}>
-              Saytga qaytish
-            </Text>
+            {!isMobile && (
+              <Text style={[styles.exitText, { color: colors.textSecondary }]}>
+                Saytga qaytish
+              </Text>
+            )}
           </TouchableOpacity>
 
           <View style={styles.brandTitleWrap}>
@@ -112,21 +121,23 @@ export default function AdminLayout() {
             </View>
             <View>
               <Text style={[styles.adminTitle, { color: colors.text }]}>
-                BOSHQARUV TIZIMI
+                {isMobile ? 'ADMIN' : 'BOSHQARUV TIZIMI'}
               </Text>
-              <Text style={styles.adminOwner}>
-                Loyiha egasi: Nasriddinova Dilfuza
-              </Text>
+              {!isMobile && (
+                <Text style={styles.adminOwner}>
+                  Loyiha egasi: Nasriddinova Dilfuza
+                </Text>
+              )}
             </View>
           </View>
         </View>
 
         <View style={styles.topBarRight}>
-          {/* Prominent Theme Toggle Pill */}
+          {/* Prominent Theme Toggle */}
           <TouchableOpacity
             onPress={toggleTheme}
             style={[
-              styles.themeTogglePill,
+              isMobile ? styles.iconBtn : styles.themeTogglePill,
               {
                 backgroundColor: isDark ? '#222222' : '#F3F4F6',
                 borderColor: colors.border,
@@ -135,42 +146,53 @@ export default function AdminLayout() {
           >
             {isDark ? (
               <>
-                <Sun size={14} color="#FBBF24" />
-                <Text style={[styles.themePillText, { color: '#FFF' }]}>Kunduzgi</Text>
+                <Sun size={15} color="#FBBF24" />
+                {!isMobile && <Text style={[styles.themePillText, { color: '#FFF' }]}>Kunduzgi</Text>}
               </>
             ) : (
               <>
-                <Moon size={14} color="#111" />
-                <Text style={[styles.themePillText, { color: '#111' }]}>Tungi</Text>
+                <Moon size={15} color="#111" />
+                {!isMobile && <Text style={[styles.themePillText, { color: '#111' }]}>Tungi</Text>}
               </>
             )}
           </TouchableOpacity>
 
           {/* Language Selector */}
-          <View style={[styles.langSwitch, { backgroundColor: isDark ? '#222222' : '#F3F4F6' }]}>
-            {(['uz', 'ru', 'en'] as Language[]).map((lang) => (
-              <TouchableOpacity
-                key={lang}
-                onPress={() => setLanguage(lang)}
-                style={[
-                  styles.langBtn,
-                  language === lang && { backgroundColor: COLORS.kiaRed },
-                ]}
-              >
-                <Text
+          {isMobile ? (
+            <TouchableOpacity
+              onPress={cycleLanguage}
+              style={[styles.iconBtn, { backgroundColor: isDark ? '#222222' : '#F3F4F6' }]}
+            >
+              <Text style={{ fontSize: 11, fontWeight: '800', color: colors.text }}>
+                {language.toUpperCase()}
+              </Text>
+            </TouchableOpacity>
+          ) : (
+            <View style={[styles.langSwitch, { backgroundColor: isDark ? '#222222' : '#F3F4F6' }]}>
+              {(['uz', 'ru', 'en'] as Language[]).map((lang) => (
+                <TouchableOpacity
+                  key={lang}
+                  onPress={() => setLanguage(lang)}
                   style={[
-                    styles.langText,
-                    {
-                      color: language === lang ? '#FFFFFF' : colors.textSecondary,
-                      fontWeight: language === lang ? '700' : '500',
-                    },
+                    styles.langBtn,
+                    language === lang && { backgroundColor: COLORS.kiaRed },
                   ]}
                 >
-                  {lang.toUpperCase()}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
+                  <Text
+                    style={[
+                      styles.langText,
+                      {
+                        color: language === lang ? '#FFFFFF' : colors.textSecondary,
+                        fontWeight: language === lang ? '700' : '500',
+                      },
+                    ]}
+                  >
+                    {lang.toUpperCase()}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
 
           {/* Notifications Icon Button */}
           <TouchableOpacity
@@ -188,13 +210,15 @@ export default function AdminLayout() {
             )}
           </TouchableOpacity>
 
-          {/* Role badge */}
-          <View style={styles.roleTag}>
-            <ShieldCheck size={13} color="#FFF" />
-            <Text style={styles.roleTagText}>
-              {user ? user.role.toUpperCase().replace('_', ' ') : 'SUPER ADMIN'}
-            </Text>
-          </View>
+          {/* Role badge (Desktop only) */}
+          {!isMobile && (
+            <View style={styles.roleTag}>
+              <ShieldCheck size={13} color="#FFF" />
+              <Text style={styles.roleTagText}>
+                {user ? user.role.toUpperCase().replace('_', ' ') : 'SUPER ADMIN'}
+              </Text>
+            </View>
+          )}
 
           {/* Logout */}
           <TouchableOpacity
@@ -209,7 +233,7 @@ export default function AdminLayout() {
         </View>
       </View>
 
-      <View style={[styles.body, isWide && styles.bodyWide]}>
+      <View style={[styles.body, isWide && styles.bodyWide, { width: '100%', maxWidth: '100%', overflow: 'hidden' }]}>
         {/* Sidebar Navigation */}
         <View
           style={[
@@ -218,13 +242,15 @@ export default function AdminLayout() {
               backgroundColor: isDark ? '#141414' : '#FFFFFF',
               borderRightColor: colors.border,
             },
-            !isWide && styles.sidebarMobile,
+            !isWide && [styles.sidebarMobile, { width: '100%', maxWidth: '100%', overflow: 'hidden' }],
           ]}
         >
           <ScrollView
             horizontal={!isWide}
             showsHorizontalScrollIndicator={false}
             showsVerticalScrollIndicator={false}
+            style={{ width: '100%', maxWidth: '100%' }}
+            contentContainerStyle={!isWide && { paddingHorizontal: 6 }}
           >
             <View style={[styles.navList, !isWide && styles.navListMobile]}>
               {adminNav.map((item) => {
@@ -281,8 +307,11 @@ export default function AdminLayout() {
 
         {/* Content Area */}
         <ScrollView
-          style={styles.mainContent}
-          contentContainerStyle={styles.mainContentContainer}
+          style={[styles.mainContent, { width: '100%', maxWidth: '100%' }]}
+          contentContainerStyle={[
+            styles.mainContentContainer,
+            isMobile && { padding: 12, paddingBottom: 60, width: '100%' },
+          ]}
           showsVerticalScrollIndicator={false}
         >
           <Slot />
@@ -295,26 +324,30 @@ export default function AdminLayout() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    width: '100%',
+    maxWidth: '100%',
+    overflow: 'hidden',
   },
   topBar: {
-    height: 64,
+    height: 60,
     borderBottomWidth: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 20,
     zIndex: 10,
+    width: '100%',
+    maxWidth: '100%',
   },
   topBarLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 16,
+    gap: 10,
   },
   exitBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    paddingRight: 14,
+    gap: 4,
+    paddingRight: 10,
     borderRightWidth: 1,
     borderRightColor: 'rgba(150,150,150,0.2)',
   },
@@ -325,24 +358,24 @@ const styles = StyleSheet.create({
   brandTitleWrap: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: 8,
   },
   badgeKia: {
     backgroundColor: COLORS.kiaRed,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
+    paddingHorizontal: 7,
+    paddingVertical: 2,
     borderRadius: RADIUS.sm,
   },
   badgeKiaText: {
     color: '#FFF',
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '900',
-    letterSpacing: 2,
+    letterSpacing: 1.5,
   },
   adminTitle: {
     fontSize: 13,
     fontWeight: '900',
-    letterSpacing: 1,
+    letterSpacing: 0.5,
   },
   adminOwner: {
     fontSize: 10,
@@ -351,7 +384,7 @@ const styles = StyleSheet.create({
   topBarRight: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: 8,
   },
   themeTogglePill: {
     flexDirection: 'row',
@@ -380,8 +413,8 @@ const styles = StyleSheet.create({
     fontSize: 10,
   },
   iconBtn: {
-    width: 32,
-    height: 32,
+    width: 34,
+    height: 34,
     borderRadius: RADIUS.md,
     alignItems: 'center',
     justifyContent: 'center',
@@ -389,8 +422,8 @@ const styles = StyleSheet.create({
   },
   notifBadge: {
     position: 'absolute',
-    top: -3,
-    right: -3,
+    top: -2,
+    right: -2,
     backgroundColor: COLORS.kiaRed,
     borderRadius: RADIUS.full,
     minWidth: 14,
@@ -425,6 +458,9 @@ const styles = StyleSheet.create({
   body: {
     flex: 1,
     flexDirection: 'column',
+    width: '100%',
+    maxWidth: '100%',
+    overflow: 'hidden',
   },
   bodyWide: {
     flexDirection: 'row',
@@ -436,11 +472,13 @@ const styles = StyleSheet.create({
   },
   sidebarMobile: {
     width: '100%',
-    height: 56,
+    maxWidth: '100%',
+    height: 52,
     borderRightWidth: 0,
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(150,150,150,0.15)',
     paddingVertical: 4,
+    overflow: 'hidden',
   },
   navList: {
     paddingHorizontal: 10,
@@ -449,7 +487,7 @@ const styles = StyleSheet.create({
   navListMobile: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 8,
+    paddingHorizontal: 6,
     gap: 6,
   },
   navItem: {
@@ -479,9 +517,13 @@ const styles = StyleSheet.create({
   },
   mainContent: {
     flex: 1,
+    width: '100%',
+    maxWidth: '100%',
   },
   mainContentContainer: {
     padding: 24,
     paddingBottom: 60,
+    width: '100%',
+    maxWidth: '100%',
   },
 });

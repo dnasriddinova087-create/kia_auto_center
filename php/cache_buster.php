@@ -67,3 +67,4 @@ function carImageUrl($imagePath, $updatedAt = null) {
 function formatCarPrice($amountUzs) {
     return number_format((float)$amountUzs, 0, '.', ' ') . ' UZS';
 }
+

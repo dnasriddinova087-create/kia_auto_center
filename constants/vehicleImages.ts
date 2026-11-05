@@ -45,3 +45,4 @@ export function getVehicleImage(vehicle?: { id?: string; mainImage?: string; nam
 
   return KIA_LOCAL_IMAGES['kia-k5'];
 }
+
